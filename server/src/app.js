@@ -14,7 +14,8 @@ const auditRoutes = require('./routes/auditRoutes');
 
 const app = express();
 
-// Security HTTP headers
+// Trust first proxy hop (Nginx reverse proxy on EC2)
+app.set('trust proxy', 1);
 app.use(
   helmet({
     contentSecurityPolicy: {

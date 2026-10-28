@@ -5,6 +5,7 @@ const apiLimiter = rateLimit({
   max: 200, // limit each IP to 200 requests per window
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { xForwardedForHeader: false },
   message: {
     success: false,
     error: {
@@ -19,6 +20,7 @@ const authLimiter = rateLimit({
   max: 30, // 30 login/register attempts per 15 minutes
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { xForwardedForHeader: false },
   message: {
     success: false,
     error: {
@@ -33,6 +35,7 @@ const pageViewLimiter = rateLimit({
   max: 120, // 120 page views per minute per IP
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { xForwardedForHeader: false },
   message: {
     success: false,
     error: {
