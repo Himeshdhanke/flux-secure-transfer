@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { documentService } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 import UploadModal from '../components/UploadModal';
 import ShareModal from '../components/ShareModal';
 import {
@@ -17,6 +18,7 @@ import {
 } from 'lucide-react';
 
 export default function Documents() {
+  const { user } = useAuth();
   const [documents, setDocuments] = useState([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
@@ -35,8 +37,10 @@ export default function Documents() {
   };
 
   useEffect(() => {
+    setDocuments([]);
+    setLoading(true);
     loadDocuments();
-  }, []);
+  }, [user?.email, user?.cognitoSub]);
 
   const handleDelete = async (id, filename) => {
     if (!window.confirm(`Are you sure you want to permanently delete "${filename}"? All active recipient shares will also be revoked.`)) {

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { documentService, shareService, auditService } from '../services/api';
 import UploadModal from '../components/UploadModal';
 import ShareModal from '../components/ShareModal';
+import { useAuth } from '../contexts/AuthContext';
 import {
   FileText,
   Share2,
@@ -20,6 +21,7 @@ import {
 } from 'lucide-react';
 
 export default function Dashboard() {
+  const { user } = useAuth();
   const [documents, setDocuments] = useState([]);
   const [shares, setShares] = useState([]);
   const [recentLogs, setRecentLogs] = useState([]);
@@ -45,8 +47,12 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
+    setDocuments([]);
+    setShares([]);
+    setRecentLogs([]);
+    setLoading(true);
     loadData();
-  }, []);
+  }, [user?.email, user?.cognitoSub]);
 
   const handleDeleteDoc = async (id, name) => {
     if (!window.confirm(`Are you sure you want to delete "${name}"? This will permanently delete the encrypted ciphertext and all active shares.`)) {

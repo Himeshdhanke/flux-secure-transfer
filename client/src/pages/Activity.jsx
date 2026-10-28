@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { auditService } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 import {
   Activity as ActivityIcon,
   ShieldCheck,
@@ -14,6 +15,7 @@ import {
 } from 'lucide-react';
 
 export default function Activity() {
+  const { user } = useAuth();
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('ALL');
@@ -31,8 +33,9 @@ export default function Activity() {
   };
 
   useEffect(() => {
+    setLogs([]);
     loadLogs();
-  }, []);
+  }, [user?.email, user?.cognitoSub]);
 
   const filteredLogs = logs.filter((log) => {
     if (filter === 'ALL') return true;

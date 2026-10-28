@@ -62,10 +62,21 @@ class AuditService {
   /**
    * Retrieve recent audit activity for an owner's documents.
    * @param {string} ownerSub
-   * @param {number} limit
+   * @param {string} [ownerEmail]
+   * @param {number} [limit]
    */
-  async getOwnerActivity(ownerSub, limit = 50) {
-    return AuditLog.find({ actorSub: ownerSub })
+  async getOwnerActivity(ownerSub, ownerEmail = null, limit = 50) {
+    const query = {};
+    const normalizedEmail = ownerEmail ? ownerEmail.toLowerCase().trim() : null;
+    if (ownerSub && normalizedEmail) {
+      query.$or = [{ actorSub: ownerSub }, { actorEmail: normalizedEmail }];
+    } else if (ownerSub) {
+      query.actorSub = ownerSub;
+    } else if (normalizedEmail) {
+      query.actorEmail = normalizedEmail;
+    }
+
+    return AuditLog.find(query)
       .populate('documentId', 'originalFilename')
       .populate('shareId', 'recipientEmail')
       .sort({ createdAt: -1 })

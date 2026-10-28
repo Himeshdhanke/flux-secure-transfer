@@ -101,7 +101,17 @@ class DocumentController {
    */
   async listDocuments(req, res, next) {
     try {
-      const documents = await Document.find({ ownerSub: req.user.cognitoSub })
+      const query = {};
+      const normalizedEmail = req.user.email ? req.user.email.toLowerCase().trim() : null;
+      if (req.user.cognitoSub && normalizedEmail) {
+        query.$or = [{ ownerSub: req.user.cognitoSub }, { ownerEmail: normalizedEmail }];
+      } else if (req.user.cognitoSub) {
+        query.ownerSub = req.user.cognitoSub;
+      } else if (normalizedEmail) {
+        query.ownerEmail = normalizedEmail;
+      }
+
+      const documents = await Document.find(query)
         .select('-wrappedDek -nonce -authTag')
         .sort({ createdAt: -1 });
 
@@ -119,10 +129,17 @@ class DocumentController {
    */
   async getDocument(req, res, next) {
     try {
-      const document = await Document.findOne({
-        _id: req.params.id,
-        ownerSub: req.user.cognitoSub,
-      }).select('-wrappedDek -nonce -authTag');
+      const query = { _id: req.params.id };
+      const normalizedEmail = req.user.email ? req.user.email.toLowerCase().trim() : null;
+      if (req.user.cognitoSub && normalizedEmail) {
+        query.$or = [{ ownerSub: req.user.cognitoSub }, { ownerEmail: normalizedEmail }];
+      } else if (req.user.cognitoSub) {
+        query.ownerSub = req.user.cognitoSub;
+      } else if (normalizedEmail) {
+        query.ownerEmail = normalizedEmail;
+      }
+
+      const document = await Document.findOne(query).select('-wrappedDek -nonce -authTag');
 
       if (!document) {
         throw new NotFoundError('Document not found or you do not have permission to view it.');
@@ -142,10 +159,17 @@ class DocumentController {
    */
   async deleteDocument(req, res, next) {
     try {
-      const document = await Document.findOne({
-        _id: req.params.id,
-        ownerSub: req.user.cognitoSub,
-      });
+      const query = { _id: req.params.id };
+      const normalizedEmail = req.user.email ? req.user.email.toLowerCase().trim() : null;
+      if (req.user.cognitoSub && normalizedEmail) {
+        query.$or = [{ ownerSub: req.user.cognitoSub }, { ownerEmail: normalizedEmail }];
+      } else if (req.user.cognitoSub) {
+        query.ownerSub = req.user.cognitoSub;
+      } else if (normalizedEmail) {
+        query.ownerEmail = normalizedEmail;
+      }
+
+      const document = await Document.findOne(query);
 
       if (!document) {
         throw new NotFoundError('Document not found or you do not have permission to delete it.');
@@ -174,7 +198,7 @@ class DocumentController {
       // 4. Delete document record
       await Document.findByIdAndDelete(document._id);
 
-      logger.info('Document permanently deleted', { documentId: req.params.id, ownerSub: req.user.cognitoSub });
+      logger.info('Document permanently deleted', { documentId: req.params.id, ownerSub: req.user.cognitoSub, ownerEmail: req.user.email });
 
       res.json({
         success: true,

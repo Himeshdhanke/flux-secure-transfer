@@ -12,14 +12,26 @@ class ShareService {
    * 
    * @param {object} params
    * @param {string} params.documentId
-   * @param {string} params.ownerSub
+   * @param {string} [params.ownerSub]
+   * @param {string} [params.ownerEmail]
    * @param {string} params.recipientEmail
    * @param {number} params.expiryHours
    * @param {number} [params.maxViewSessions]
    * @returns {Promise<{ share: object, rawToken: string }>}
    */
-  async createShare({ documentId, ownerSub, recipientEmail, expiryHours = 24, maxViewSessions = null }) {
-    const document = await Document.findOne({ _id: documentId, ownerSub });
+  async createShare({ documentId, ownerSub, ownerEmail, recipientEmail, expiryHours = 24, maxViewSessions = null }) {
+    const query = { _id: documentId };
+    const normalizedOwnerEmail = ownerEmail ? ownerEmail.toLowerCase().trim() : null;
+
+    if (ownerSub && normalizedOwnerEmail) {
+      query.$or = [{ ownerSub }, { ownerEmail: normalizedOwnerEmail }];
+    } else if (ownerSub) {
+      query.ownerSub = ownerSub;
+    } else if (normalizedOwnerEmail) {
+      query.ownerEmail = normalizedOwnerEmail;
+    }
+
+    const document = await Document.findOne(query);
     if (!document) {
       throw new NotFoundError('Document not found or you do not have permission to share it.');
     }
@@ -44,7 +56,8 @@ class ShareService {
 
     const share = await Share.create({
       documentId: document._id,
-      ownerSub,
+      ownerSub: document.ownerSub || ownerSub,
+      ownerEmail: document.ownerEmail || normalizedOwnerEmail,
       tokenHash,
       recipientEmail: normalizedEmail,
       expiresAt,
@@ -89,10 +102,21 @@ class ShareService {
   /**
    * List all shares created by a document owner.
    * @param {string} ownerSub
+   * @param {string} [ownerEmail]
    * @returns {Promise<Array>}
    */
-  async listSharesByOwner(ownerSub) {
-    return Share.find({ ownerSub })
+  async listSharesByOwner(ownerSub, ownerEmail) {
+    const query = {};
+    const normalizedEmail = ownerEmail ? ownerEmail.toLowerCase().trim() : null;
+    if (ownerSub && normalizedEmail) {
+      query.$or = [{ ownerSub }, { ownerEmail: normalizedEmail }];
+    } else if (ownerSub) {
+      query.ownerSub = ownerSub;
+    } else if (normalizedEmail) {
+      query.ownerEmail = normalizedEmail;
+    }
+
+    return Share.find(query)
       .populate('documentId', 'originalFilename sizeBytes pageCount createdAt')
       .sort({ createdAt: -1 });
   }
@@ -101,10 +125,21 @@ class ShareService {
    * Revoke an active share immediately.
    * @param {string} shareId
    * @param {string} ownerSub
+   * @param {string} [ownerEmail]
    * @returns {Promise<object>}
    */
-  async revokeShare(shareId, ownerSub) {
-    const share = await Share.findOne({ _id: shareId, ownerSub });
+  async revokeShare(shareId, ownerSub, ownerEmail) {
+    const query = { _id: shareId };
+    const normalizedEmail = ownerEmail ? ownerEmail.toLowerCase().trim() : null;
+    if (ownerSub && normalizedEmail) {
+      query.$or = [{ ownerSub }, { ownerEmail: normalizedEmail }];
+    } else if (ownerSub) {
+      query.ownerSub = ownerSub;
+    } else if (normalizedEmail) {
+      query.ownerEmail = normalizedEmail;
+    }
+
+    const share = await Share.findOne(query);
     if (!share) {
       throw new NotFoundError('Share not found or you do not have permission to revoke it.');
     }
@@ -116,7 +151,7 @@ class ShareService {
     share.revokedAt = new Date();
     await share.save();
 
-    logger.security('Share revoked by owner', { shareId: share._id, ownerSub });
+    logger.security('Share revoked by owner', { shareId: share._id, ownerSub, ownerEmail });
     return share;
   }
 }

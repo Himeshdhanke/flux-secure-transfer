@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { shareService } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 import {
   Share2,
   Lock,
@@ -17,6 +18,7 @@ import {
 } from 'lucide-react';
 
 export default function ShareManagement() {
+  const { user } = useAuth();
   const [shares, setShares] = useState([]);
   const [loading, setLoading] = useState(true);
   const [copiedId, setCopiedId] = useState(null);
@@ -34,8 +36,10 @@ export default function ShareManagement() {
   };
 
   useEffect(() => {
+    setShares([]);
+    setLoading(true);
     loadShares();
-  }, []);
+  }, [user?.email, user?.cognitoSub]);
 
   const handleRevoke = async (id, recipient) => {
     if (!window.confirm(`Are you sure you want to immediately revoke access for ${recipient}? The receiver will no longer be able to load or view pages.`)) {

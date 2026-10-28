@@ -16,6 +16,7 @@ class ShareController {
       const { share, rawToken } = await shareService.createShare({
         documentId,
         ownerSub: req.user.cognitoSub,
+        ownerEmail: req.user.email,
         recipientEmail,
         expiryHours,
         maxViewSessions,
@@ -66,7 +67,7 @@ class ShareController {
    */
   async listShares(req, res, next) {
     try {
-      const shares = await shareService.listSharesByOwner(req.user.cognitoSub);
+      const shares = await shareService.listSharesByOwner(req.user.cognitoSub, req.user.email);
       res.json({
         success: true,
         data: { shares },
@@ -81,10 +82,17 @@ class ShareController {
    */
   async getShare(req, res, next) {
     try {
-      const share = await Share.findOne({
-        _id: req.params.id,
-        ownerSub: req.user.cognitoSub,
-      }).populate('documentId', 'originalFilename sizeBytes pageCount');
+      const query = { _id: req.params.id };
+      const normalizedEmail = req.user.email ? req.user.email.toLowerCase().trim() : null;
+      if (req.user.cognitoSub && normalizedEmail) {
+        query.$or = [{ ownerSub: req.user.cognitoSub }, { ownerEmail: normalizedEmail }];
+      } else if (req.user.cognitoSub) {
+        query.ownerSub = req.user.cognitoSub;
+      } else if (normalizedEmail) {
+        query.ownerEmail = normalizedEmail;
+      }
+
+      const share = await Share.findOne(query).populate('documentId', 'originalFilename sizeBytes pageCount');
 
       if (!share) {
         throw new NotFoundError('Share not found.');
@@ -104,7 +112,7 @@ class ShareController {
    */
   async revokeShare(req, res, next) {
     try {
-      const share = await shareService.revokeShare(req.params.id, req.user.cognitoSub);
+      const share = await shareService.revokeShare(req.params.id, req.user.cognitoSub, req.user.email);
 
       await auditService.recordEvent({
         eventType: 'SHARE_REVOKED',

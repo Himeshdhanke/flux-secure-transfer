@@ -12,6 +12,12 @@ const shareSchema = new mongoose.Schema({
     required: true,
     index: true,
   },
+  ownerEmail: {
+    type: String,
+    lowercase: true,
+    trim: true,
+    index: true,
+  },
   // SHA-256 hex hash of the raw URL-safe base64 token. Raw token is never persisted.
   tokenHash: {
     type: String,

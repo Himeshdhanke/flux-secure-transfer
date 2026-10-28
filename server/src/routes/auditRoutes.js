@@ -8,7 +8,7 @@ router.use(authenticate);
 router.get('/', async (req, res, next) => {
   try {
     const limit = parseInt(req.query.limit || '50', 10);
-    const logs = await auditService.getOwnerActivity(req.user.cognitoSub, limit);
+    const logs = await auditService.getOwnerActivity(req.user.cognitoSub, req.user.email, limit);
     res.json({
       success: true,
       data: { logs },
