@@ -1,46 +1,47 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# SecureShare — Amazon EC2 Deployment Script (Ubuntu 22.04 / 24.04 LTS)
+# FLUX — AWS EC2 Automated Deployment Script (Ubuntu 22.04 / 24.04 LTS)
 # ==============================================================================
 set -e
 
-echo "=== [1/6] Updating system packages ==="
+echo "=== [1/5] Updating system packages & installing Nginx ==="
 sudo apt-get update && sudo apt-get upgrade -y
-sudo apt-get install -y curl git ufw nginx
+sudo apt-get install -y curl git ufw nginx fontconfig ca-certificates
 
-echo "=== [2/6] Installing Node.js 22 LTS ==="
-curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+echo "=== [2/5] Installing Node.js 20 LTS & PM2 ==="
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt-get install -y nodejs
 sudo npm install -g pm2
 
-echo "=== [3/6] Installing MongoDB Community Server ==="
-curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | \
-   sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg --dearmor
-echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | \
-   sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
-sudo apt-get update
-sudo apt-get install -y mongodb-org
-sudo systemctl enable mongod
-sudo systemctl start mongod
+echo "=== [3/5] Setting up project directory ==="
+sudo mkdir -p /var/www/flux
+sudo chown -R $USER:$USER /var/www/flux
 
-echo "=== [4/6] Installing application dependencies and building client ==="
-# Assuming repository is at /var/www/secureshare
-cd /var/www/secureshare
-cd server && npm install --production
-cd ../client && npm install && npm run build
-cd ..
+if [ ! -d "/var/www/flux/.git" ]; then
+    echo "Cloning repository..."
+    git clone https://github.com/Himeshdhanke/flux-secure-transfer.git /var/www/flux
+else
+    echo "Updating existing repository..."
+    cd /var/www/flux && git pull origin main
+fi
 
-echo "=== [5/6] Configuring Nginx Reverse Proxy ==="
-sudo cp deploy/nginx.conf /etc/nginx/sites-available/secureshare
-sudo ln -sf /etc/nginx/sites-available/secureshare /etc/nginx/sites-enabled/
+cd /var/www/flux
+
+echo "=== [4/5] Installing dependencies & building frontend ==="
+cd /var/www/flux/server && npm ci --only=production
+cd /var/www/flux/client && npm ci && npm run build
+
+echo "=== [5/5] Configuring Nginx reverse proxy ==="
+sudo cp /var/www/flux/deploy/nginx.conf /etc/nginx/sites-available/flux
+sudo ln -sf /etc/nginx/sites-available/flux /etc/nginx/sites-enabled/
 sudo rm -f /etc/nginx/sites-enabled/default
 sudo nginx -t && sudo systemctl restart nginx
 
-echo "=== [6/6] Starting SecureShare with PM2 ==="
-cd /var/www/secureshare/server
-pm2 start src/server.js --name "secureshare-api" -i max
-pm2 save
-pm2 startup
-
-echo "=== DEPLOYMENT COMPLETED SUCCESSFULLY ==="
-echo "SecureShare is now running on port 5000 behind Nginx on port 80/443."
+echo ""
+echo "======================================================================"
+echo "✓ BUILD & NGINX SETUP COMPLETED!"
+echo "Next: Create /var/www/flux/server/.env with your AWS credentials."
+echo "Then start the backend with:"
+echo "  cd /var/www/flux/server && pm2 start src/server.js --name flux-api"
+echo "  pm2 save && pm2 startup"
+echo "======================================================================"
