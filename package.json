@@ -1,0 +1,15 @@
+{
+  "name": "secureshare",
+  "version": "1.0.0",
+  "description": "SecureShare - Encrypted Document Sharing with Dynamic Watermarking & Zero-Trust Access",
+  "scripts": {
+    "start": "node server/src/server.js",
+    "server": "npm --prefix server start",
+    "server:dev": "npm --prefix server run dev",
+    "client": "npm --prefix client run dev",
+    "client:build": "npm --prefix client run build",
+    "test": "npm --prefix server test"
+  },
+  "author": "SecureShare Engineering",
+  "license": "ISC"
+}

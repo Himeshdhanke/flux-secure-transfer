@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Environment Variables & Secrets (CRITICAL: Never commit credentials)
+.env
+.env.*
+!.env.example
+*/.env
+*/.env.*
+!*/.env.example
+
+# Build Artifacts
+dist/
+*/dist/
+build/
+*/build/
+
+# Logs & Storage Vaults
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+storage_vault/
+server/storage_vault/
+.tempmediaStorage/
+
+# Operating System & IDE Files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Antigravity Brain Scratch/Artifacts
+.system_generated/
+scratch/
