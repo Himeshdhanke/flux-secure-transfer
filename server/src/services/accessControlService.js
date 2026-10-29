@@ -71,7 +71,7 @@ class AccessControlService {
         authorizedRecipient: normalizedRecipientEmail,
       });
       throw new ForbiddenError(
-        `Access denied. This document is restricted exclusively to ${normalizedRecipientEmail}. You are currently signed in as ${normalizedUserEmail}.`,
+        `Access denied. You are currently signed in as ${normalizedUserEmail}, but this protected document is not shared with your account.`,
         'UNAUTHORIZED_RECIPIENT'
       );
     }

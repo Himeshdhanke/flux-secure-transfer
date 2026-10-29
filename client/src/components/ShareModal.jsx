@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { shareService } from '../services/api';
+import { copyToClipboard } from '../utils/clipboard';
 import { X, Share2, Copy, Check, Clock, Users, ShieldAlert, ExternalLink, AlertCircle, Lock } from 'lucide-react';
 
 export default function ShareModal({ isOpen, onClose, document, onShareCreated }) {
@@ -10,6 +11,7 @@ export default function ShareModal({ isOpen, onClose, document, onShareCreated }
   const [error, setError] = useState('');
   const [createdShare, setCreatedShare] = useState(null);
   const [copied, setCopied] = useState(false);
+  const urlInputRef = useRef(null);
 
   if (!isOpen || !document) return null;
 
@@ -43,11 +45,17 @@ export default function ShareModal({ isOpen, onClose, document, onShareCreated }
     }
   };
 
-  const handleCopy = () => {
+  const handleCopy = async () => {
     if (!createdShare?.shareUrl) return;
-    navigator.clipboard.writeText(createdShare.shareUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
+    const ok = await copyToClipboard(createdShare.shareUrl);
+    if (ok) {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } else {
+      urlInputRef.current?.select();
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    }
   };
 
   const resetAndClose = () => {
@@ -128,10 +136,12 @@ export default function ShareModal({ isOpen, onClose, document, onShareCreated }
               </label>
               <div className="flex items-center gap-2">
                 <input
+                  ref={urlInputRef}
                   type="text"
                   readOnly
                   value={createdShare.shareUrl}
-                  className="w-full rounded-xl bg-[#fafafa] border border-[#171e19]/15 px-3.5 py-2.5 font-mono text-xs text-[#171e19] focus:outline-none"
+                  onClick={(e) => e.target.select()}
+                  className="w-full rounded-xl bg-[#fafafa] border border-[#171e19]/15 px-3.5 py-2.5 font-mono text-xs text-[#171e19] focus:outline-none cursor-pointer"
                 />
                 <button
                   type="button"

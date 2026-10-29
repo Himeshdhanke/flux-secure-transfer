@@ -273,10 +273,7 @@ export default function ProtectedViewer() {
         const message = errData?.error?.message || err.message;
         setDenialState({
           reason: code,
-          details: {
-            message,
-            recipientEmail: shareInfo?.rawRecipientEmail || shareInfo?.recipientEmail,
-          },
+          details: { message },
         });
         setLoading(false);
       }
@@ -318,10 +315,9 @@ export default function ProtectedViewer() {
       }
       const code = errData?.error?.code || 'AUTH_FAILED';
       const message = errData?.error?.message || 'Access Forbidden.';
-      const recipient = currentShareInfo?.rawRecipientEmail || currentShareInfo?.recipientEmail || shareInfo?.rawRecipientEmail || shareInfo?.recipientEmail;
       setDenialState({
         reason: code,
-        details: { message, recipientEmail: recipient },
+        details: { message },
       });
     } finally {
       setLoading(false);
@@ -352,7 +348,7 @@ export default function ProtectedViewer() {
       if (code === 'EXPIRED' || code === 'REVOKED' || code === 'UNAUTHORIZED_RECIPIENT' || code === 'MAX_SESSIONS_EXCEEDED') {
         setDenialState({
           reason: code,
-          details: { message, recipientEmail: shareInfo?.rawRecipientEmail || shareInfo?.recipientEmail },
+          details: { message },
         });
       } else {
         showSecurityNotice(message);
@@ -438,12 +434,12 @@ export default function ProtectedViewer() {
             AUTHENTICATION REQUIRED
           </h2>
           <p className="font-satoshi text-xs text-[#171e19]/70 mt-2 font-medium">
-            This protected document is restricted to <strong className="font-mono text-[#171e19] bg-[#ffe17c]/40 px-1.5 py-0.5 rounded">{shareInfo?.recipientEmail}</strong>.
+            This document is protected by Zero-Trust policy. Please sign in with your verified recipient account to view.
           </p>
 
           <div className="mt-6 p-4 rounded-xl bg-[#fafafa] border border-[#171e19]/10 text-xs font-satoshi text-[#171e19]/70 text-left space-y-1">
             <p className="font-anton uppercase text-[#171e19]">ZERO-TRUST RECIPIENT VERIFICATION:</p>
-            <p>• You must authenticate to prove ownership of the recipient email.</p>
+            <p>• You must authenticate to prove authorized access to this document.</p>
             <p>• Pages are dynamically watermarked with your verified identity.</p>
           </div>
 

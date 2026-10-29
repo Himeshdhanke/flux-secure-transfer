@@ -32,19 +32,11 @@ class ViewController {
       const isRevoked = Boolean(share.revokedAt);
       const isExpired = new Date() > share.expiresAt;
 
-      // Mask recipient email for public privacy preview (e.g. b***b@domain.com)
-      const emailParts = share.recipientEmail.split('@');
-      const maskedEmail = emailParts[0].length > 2
-        ? `${emailParts[0][0]}***${emailParts[0].slice(-1)}@${emailParts[1]}`
-        : `${emailParts[0]}***@${emailParts[1]}`;
-
       res.json({
         success: true,
         data: {
           originalFilename: document.originalFilename,
           pageCount: document.pageCount,
-          recipientEmail: maskedEmail,
-          rawRecipientEmail: share.recipientEmail, // For matching logic
           expiresAt: share.expiresAt,
           isExpired,
           isRevoked,

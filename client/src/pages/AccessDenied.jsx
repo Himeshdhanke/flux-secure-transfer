@@ -12,7 +12,6 @@ export default function AccessDenied({ reason = 'UNAUTHORIZED', details = {} }) 
     navigate('/login', {
       state: {
         from: { pathname: window.location.pathname },
-        suggestedEmail: details.recipientEmail,
       },
     });
   };
@@ -22,11 +21,11 @@ export default function AccessDenied({ reason = 'UNAUTHORIZED', details = {} }) 
       case 'UNAUTHORIZED_RECIPIENT':
         return {
           title: 'UNAUTHORIZED RECIPIENT',
-          badge: 'Recipient Email Policy Violation',
-          description: details.message || `This document is restricted exclusively to ${details.recipientEmail || 'another verified recipient'}.`,
+          badge: 'Access Denied',
+          description: details.message || 'This document is restricted to an authorized recipient. Your current account does not have permission to view it.',
           subtext: user
             ? `You are currently authenticated as ${user.email}. Please switch to the authorized recipient account.`
-            : 'Please authenticate with the authorized recipient email.',
+            : 'Please authenticate with the authorized recipient email address.',
           icon: UserX,
           color: 'rose',
         };
@@ -119,7 +118,7 @@ export default function AccessDenied({ reason = 'UNAUTHORIZED', details = {} }) 
             className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-anton text-xs uppercase tracking-wider bg-[#171e19] hover:bg-black text-[#ffe17c] border border-[#171e19] transition-all cursor-pointer shadow-md"
           >
             <LogOut className="h-4 w-4" />
-            <span>{details.recipientEmail ? `Switch to ${details.recipientEmail}` : 'Switch Account'}</span>
+            <span>Switch Account</span>
           </button>
 
           <Link
