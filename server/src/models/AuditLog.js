@@ -10,6 +10,18 @@ const auditLogSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
+  ownerSub: {
+    type: String,
+    default: null,
+    index: true,
+  },
+  ownerEmail: {
+    type: String,
+    default: null,
+    lowercase: true,
+    trim: true,
+    index: true,
+  },
   shareId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Share',

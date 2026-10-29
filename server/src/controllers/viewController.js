@@ -81,12 +81,16 @@ class ViewController {
         eventType: 'SHARE_VIEW_SUCCESS',
         actorSub: req.user.cognitoSub,
         actorEmail: req.user.email,
+        ownerSub: share.ownerSub,
+        ownerEmail: share.ownerEmail,
         documentId: document._id,
         shareId: share._id,
         ipAddress: req.ip,
         details: {
           sessionId: session._id,
           pageCount: document.pageCount,
+          filename: document.originalFilename,
+          recipientEmail: share.recipientEmail,
         },
       });
 
@@ -104,23 +108,33 @@ class ViewController {
     } catch (err) {
       // Audit denial event
       const tokenHash = hashToken(req.params.token || '');
-      let share = await Share.findOne({ tokenHash }).catch(() => null);
+      let share = await Share.findOne({ tokenHash }).populate('documentId').catch(() => null);
       if (!share && /^[0-9a-fA-F]{24}$/.test(req.params.token || '')) {
-        share = await Share.findById(req.params.token).catch(() => null);
+        share = await Share.findById(req.params.token).populate('documentId').catch(() => null);
       }
 
       let eventType = 'SHARE_VIEW_DENIED_UNAUTHORIZED';
       if (err.code === 'EXPIRED') eventType = 'SHARE_VIEW_DENIED_EXPIRED';
       if (err.code === 'REVOKED') eventType = 'SHARE_VIEW_DENIED_REVOKED';
 
+      const document = share ? share.documentId : null;
+      const filename = document && typeof document === 'object' ? document.originalFilename : null;
+
       await auditService.recordEvent({
         eventType,
         actorSub: req.user ? req.user.cognitoSub : null,
         actorEmail: req.user ? req.user.email : null,
-        documentId: share ? share.documentId : null,
+        ownerSub: share ? share.ownerSub : null,
+        ownerEmail: share ? share.ownerEmail : null,
+        documentId: share ? (document ? document._id : share.documentId) : null,
         shareId: share ? share._id : null,
         ipAddress: req.ip,
-        details: { reason: err.message, errorCode: err.code },
+        details: {
+          reason: err.message,
+          errorCode: err.code,
+          filename: filename || 'Protected Document',
+          recipientEmail: share ? share.recipientEmail : null,
+        },
       }).catch(() => {});
 
       next(err);
@@ -181,12 +195,16 @@ class ViewController {
         eventType: 'PAGE_RENDERED',
         actorSub: req.user.cognitoSub,
         actorEmail: req.user.email,
+        ownerSub: share.ownerSub,
+        ownerEmail: share.ownerEmail,
         documentId: document._id,
         shareId: share._id,
         ipAddress: req.ip,
         details: {
           pageNumber,
           sessionId: session ? session._id : null,
+          filename: document.originalFilename,
+          recipientEmail: share.recipientEmail,
         },
       });
 
@@ -228,22 +246,30 @@ class ViewController {
       const rawToken = req.params.token;
       const { violationType, trigger, pageNumber } = req.body;
       const tokenHash = hashToken(rawToken || '');
-      let share = await Share.findOne({ tokenHash }).catch(() => null);
+      let share = await Share.findOne({ tokenHash }).populate('documentId').catch(() => null);
       if (!share && /^[0-9a-fA-F]{24}$/.test(rawToken || '')) {
-        share = await Share.findById(rawToken).catch(() => null);
+        share = await Share.findById(rawToken).populate('documentId').catch(() => null);
       }
+
+      const document = share ? share.documentId : null;
+      const filename = document && typeof document === 'object' ? document.originalFilename : null;
 
       await auditService.recordEvent({
         eventType: 'SECURITY_VIOLATION',
         actorSub: req.user ? req.user.cognitoSub : null,
         actorEmail: req.user ? req.user.email : null,
-        documentId: share ? share.documentId : null,
+        ownerSub: share ? share.ownerSub : null,
+        ownerEmail: share ? share.ownerEmail : null,
+        documentId: share ? (document ? document._id : share.documentId) : null,
         shareId: share ? share._id : null,
         ipAddress: req.ip,
         details: {
           violationType: violationType || 'SCREENSHOT_OR_CAPTURE_ATTEMPT',
           trigger: trigger || 'PrintScreen',
           pageNumber: pageNumber || null,
+          filename: filename || 'Protected Document',
+          recipientEmail: share ? share.recipientEmail : (req.user ? req.user.email : 'Unknown'),
+          reason: `${trigger || violationType || 'Screen capture shortcut'} detected on protected document viewer`,
           userAgent: req.headers['user-agent'] || '',
         },
       });

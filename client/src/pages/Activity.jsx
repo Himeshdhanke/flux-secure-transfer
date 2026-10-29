@@ -39,7 +39,7 @@ export default function Activity() {
 
   const filteredLogs = logs.filter((log) => {
     if (filter === 'ALL') return true;
-    if (filter === 'DENIED') return log.eventType.includes('DENIED');
+    if (filter === 'DENIED') return log.eventType.includes('DENIED') || log.eventType.includes('VIOLATION');
     if (filter === 'VIEWS') return log.eventType.includes('VIEW') || log.eventType === 'PAGE_RENDERED';
     if (filter === 'LIFECYCLE') return log.eventType.includes('DOCUMENT') || log.eventType.includes('SHARE_CREATED');
     return true;
@@ -106,7 +106,7 @@ export default function Activity() {
       ) : (
         <div className="bg-white rounded-2xl overflow-hidden border border-[#171e19]/10 shadow-sm divide-y divide-[#171e19]/10">
           {filteredLogs.map((log) => {
-            const isDenied = log.eventType.includes('DENIED');
+            const isDenied = log.eventType.includes('DENIED') || log.eventType.includes('VIOLATION');
             const isUpload = log.eventType === 'DOCUMENT_UPLOADED';
             const isView = log.eventType === 'PAGE_RENDERED' || log.eventType.includes('VIEW_SUCCESS');
 

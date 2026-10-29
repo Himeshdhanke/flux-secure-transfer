@@ -427,7 +427,7 @@ export default function Dashboard() {
               </p>
             ) : (
               recentLogs.map((log) => {
-                const isDenied = log.eventType.includes('DENIED');
+                const isDenied = log.eventType.includes('DENIED') || log.eventType.includes('VIOLATION');
                 const isSuccess = log.eventType.includes('SUCCESS') || log.eventType === 'DOCUMENT_UPLOADED';
 
                 return (
@@ -455,6 +455,12 @@ export default function Dashboard() {
                     {log.details?.filename && (
                       <p className="text-[11px] text-[#171e19]/70 truncate font-mono">
                         File: {log.details.filename}
+                      </p>
+                    )}
+
+                    {log.details?.reason && (
+                      <p className="text-[11px] text-rose-600 truncate font-semibold font-mono">
+                        Alert: {log.details.reason}
                       </p>
                     )}
                   </div>
