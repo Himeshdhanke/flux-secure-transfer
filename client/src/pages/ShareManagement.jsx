@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { shareService } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import { copyToClipboard } from '../utils/clipboard';
 import {
   Share2,
   Lock,
@@ -13,6 +14,8 @@ import {
   FileText,
   Search,
   ShieldCheck,
+  Copy,
+  Check,
   ExternalLink
 } from 'lucide-react';
 
@@ -23,6 +26,7 @@ export default function ShareManagement() {
   const [receivedShares, setReceivedShares] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [copiedId, setCopiedId] = useState(null);
 
   const loadData = async () => {
     try {
@@ -54,6 +58,15 @@ export default function ShareManagement() {
     setLoading(true);
     loadData();
   }, [user?.email, user?.cognitoSub]);
+
+  const handleCopyLink = async (shareId) => {
+    const shareUrl = `${window.location.origin}/view/${shareId}`;
+    const ok = await copyToClipboard(shareUrl);
+    if (ok) {
+      setCopiedId(shareId);
+      setTimeout(() => setCopiedId(null), 2500);
+    }
+  };
 
   const handleRevoke = async (id, recipient) => {
     if (!window.confirm(`Are you sure you want to immediately revoke access for ${recipient}? The receiver will no longer be able to load or view pages.`)) {
@@ -96,7 +109,7 @@ export default function ShareManagement() {
             </span>
           </h1>
           <p className="font-satoshi text-xs sm:text-sm text-[#171e19]/70 mt-1 font-medium">
-            Real-time recipient authorization policy, instant document viewing, and sub-200ms kill switches.
+            Real-time recipient authorization policy, instant link copying, and sub-200ms kill switches.
           </p>
         </div>
       </div>
@@ -182,7 +195,7 @@ export default function ShareManagement() {
                     <th className="px-6 py-4">SHARED BY (SENDER)</th>
                     <th className="px-6 py-4">STATUS</th>
                     <th className="px-6 py-4">EXPIRES</th>
-                    <th className="px-6 py-4 text-right">ACTION</th>
+                    <th className="px-6 py-4 text-right">ACTIONS</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#171e19]/10">
@@ -230,15 +243,34 @@ export default function ShareManagement() {
                         </div>
                       </td>
 
-                      {/* View Action */}
+                      {/* View & Copy Actions */}
                       <td className="px-6 py-4 text-right">
-                        <Link
-                          to={`/view/${share._id}`}
-                          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl font-anton text-xs uppercase tracking-wider bg-[#ffe17c] hover:brightness-105 active:scale-95 text-[#171e19] shadow-md transition-all cursor-pointer"
-                        >
-                          <Eye className="h-3.5 w-3.5" />
-                          <span>View Document</span>
-                        </Link>
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => handleCopyLink(share._id)}
+                            className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg font-anton text-xs uppercase tracking-wider transition-all cursor-pointer ${
+                              copiedId === share._id
+                                ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                                : 'bg-[#171e19]/5 hover:bg-[#171e19]/10 text-[#171e19]'
+                            }`}
+                            title="Copy protected view link"
+                          >
+                            {copiedId === share._id ? (
+                              <Check className="h-3.5 w-3.5 text-emerald-700" />
+                            ) : (
+                              <Copy className="h-3.5 w-3.5 text-[#171e19]/70" />
+                            )}
+                            <span>{copiedId === share._id ? 'COPIED' : 'COPY'}</span>
+                          </button>
+
+                          <Link
+                            to={`/view/${share._id}`}
+                            className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg font-anton text-xs uppercase tracking-wider bg-[#ffe17c] hover:brightness-105 active:scale-95 text-[#171e19] shadow-sm transition-all cursor-pointer"
+                          >
+                            <Eye className="h-3.5 w-3.5" />
+                            <span>View Document</span>
+                          </Link>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -248,7 +280,7 @@ export default function ShareManagement() {
           </div>
         )
       ) : (
-        /* TAB 2: OUTBOUND SHARES (CREATED BY ME) */
+        /* TAB 2: OUTBOUND SHARES (CREATED BY ME - SENDER VIEW) */
         filteredOutboundShares.length === 0 ? (
           <div className="bg-white p-16 rounded-2xl text-center border-2 border-dashed border-[#171e19]/15">
             <div className="h-14 w-14 rounded-2xl bg-[#171e19]/5 flex items-center justify-center text-[#171e19] mx-auto mb-3">
@@ -272,7 +304,7 @@ export default function ShareManagement() {
                     <th className="px-6 py-4">STATUS</th>
                     <th className="px-6 py-4">SESSIONS</th>
                     <th className="px-6 py-4">EXPIRES (UTC)</th>
-                    <th className="px-6 py-4 text-right">KILL SWITCH</th>
+                    <th className="px-6 py-4 text-right">ACTIONS</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#171e19]/10">
@@ -337,16 +369,52 @@ export default function ShareManagement() {
                           </div>
                         </td>
 
-                        {/* Actions */}
+                        {/* Actions: COPY LINK & REVOKE */}
                         <td className="px-6 py-4 text-right">
-                          {isActive && (
-                            <button
-                              onClick={() => handleRevoke(share._id, share.recipientEmail)}
-                              className="px-3.5 py-1.5 rounded-lg font-anton text-xs uppercase tracking-wider bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-700 border border-rose-200 transition-all shadow-sm cursor-pointer"
-                            >
-                              Revoke Now
-                            </button>
-                          )}
+                          <div className="flex items-center justify-end gap-2">
+                            {isActive ? (
+                              <>
+                                <button
+                                  onClick={() => handleCopyLink(share._id)}
+                                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-anton text-xs uppercase tracking-wider transition-all shadow-sm cursor-pointer ${
+                                    copiedId === share._id
+                                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                                      : 'bg-[#ffe17c] hover:brightness-105 active:scale-95 text-[#171e19]'
+                                  }`}
+                                  title="Copy share link to send to recipient"
+                                >
+                                  {copiedId === share._id ? (
+                                    <>
+                                      <Check className="h-3.5 w-3.5 text-emerald-700" />
+                                      <span>COPIED!</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Copy className="h-3.5 w-3.5 text-[#171e19]" />
+                                      <span>COPY LINK</span>
+                                    </>
+                                  )}
+                                </button>
+
+                                <button
+                                  onClick={() => handleRevoke(share._id, share.recipientEmail)}
+                                  className="px-3 py-1.5 rounded-lg font-anton text-xs uppercase tracking-wider bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-700 border border-rose-200 transition-all shadow-sm cursor-pointer"
+                                  title="Revoke recipient access immediately"
+                                >
+                                  Revoke
+                                </button>
+                              </>
+                            ) : (
+                              <button
+                                onClick={() => handleCopyLink(share._id)}
+                                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg font-anton text-[11px] uppercase tracking-wider bg-[#171e19]/5 hover:bg-[#171e19]/10 text-[#171e19]/60 cursor-pointer"
+                                title="Copy inactive link reference"
+                              >
+                                <Copy className="h-3 w-3" />
+                                <span>{copiedId === share._id ? 'COPIED' : 'COPY'}</span>
+                              </button>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     );

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { documentService, shareService } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import { copyToClipboard } from '../utils/clipboard';
 import UploadModal from '../components/UploadModal';
 import ShareModal from '../components/ShareModal';
 import {
@@ -17,7 +18,9 @@ import {
   Eye,
   Clock,
   ArrowUpRight,
-  ShieldAlert
+  ShieldAlert,
+  Copy,
+  Check
 } from 'lucide-react';
 
 export default function Documents() {
@@ -30,6 +33,16 @@ export default function Documents() {
   const [loading, setLoading] = useState(true);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [shareDoc, setShareDoc] = useState(null);
+  const [copiedId, setCopiedId] = useState(null);
+
+  const handleCopyLink = async (shareId) => {
+    const shareUrl = `${window.location.origin}/view/${shareId}`;
+    const ok = await copyToClipboard(shareUrl);
+    if (ok) {
+      setCopiedId(shareId);
+      setTimeout(() => setCopiedId(null), 2500);
+    }
+  };
 
   const loadData = async () => {
     try {
@@ -249,11 +262,28 @@ export default function Documents() {
                   </div>
                 </div>
 
-                {/* Primary Action: VIEW DOCUMENT */}
-                <div className="mt-6 pt-4 border-t border-[#171e19]/10">
+                {/* Primary Actions: COPY LINK & VIEW DOCUMENT */}
+                <div className="mt-6 pt-4 border-t border-[#171e19]/10 flex items-center justify-between gap-2">
+                  <button
+                    onClick={() => handleCopyLink(share._id)}
+                    className={`flex items-center justify-center gap-1.5 px-3.5 py-3 rounded-xl font-anton text-xs uppercase tracking-wider transition-all cursor-pointer ${
+                      copiedId === share._id
+                        ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                        : 'bg-[#171e19]/5 hover:bg-[#171e19]/10 text-[#171e19]'
+                    }`}
+                    title="Copy share link"
+                  >
+                    {copiedId === share._id ? (
+                      <Check className="h-4 w-4 text-emerald-700" />
+                    ) : (
+                      <Copy className="h-4 w-4 text-[#171e19]/70" />
+                    )}
+                    <span>{copiedId === share._id ? 'COPIED' : 'COPY'}</span>
+                  </button>
+
                   <Link
                     to={`/view/${share._id}`}
-                    className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#ffe17c] hover:brightness-105 active:scale-95 text-[#171e19] font-anton text-xs uppercase tracking-wider transition-all shadow-md cursor-pointer"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#ffe17c] hover:brightness-105 active:scale-95 text-[#171e19] font-anton text-xs uppercase tracking-wider transition-all shadow-md cursor-pointer"
                   >
                     <Eye className="h-4 w-4" />
                     <span>View Document</span>
