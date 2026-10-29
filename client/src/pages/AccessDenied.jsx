@@ -73,7 +73,7 @@ export default function AccessDenied({ reason = 'UNAUTHORIZED', details = {} }) 
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-white bg-grid-spec font-sans text-[#171e19]">
-      <div className="w-full max-w-lg rounded-2xl bg-white border border-[#171e19]/10 p-8 sm:p-10 shadow-2xl text-center brutalist-transition">
+      <div className="w-full max-w-lg rounded-2xl bg-white border border-[#171e19]/10 p-5 sm:p-10 shadow-2xl text-center brutalist-transition">
         {/* Icon */}
         <div className={`h-16 w-16 rounded-2xl mx-auto flex items-center justify-center mb-6 shadow-md ${
           config.color === 'amber'

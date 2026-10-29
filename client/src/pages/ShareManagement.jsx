@@ -117,17 +117,17 @@ export default function ShareManagement() {
       {/* Tabs & Search */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         {/* Tab Buttons */}
-        <div className="flex items-center gap-2 bg-[#171e19]/5 p-1 rounded-2xl w-fit">
+        <div className="flex items-center gap-1.5 sm:gap-2 bg-[#171e19]/5 p-1 rounded-2xl w-full sm:w-fit overflow-x-auto">
           <button
             onClick={() => setActiveTab('received')}
-            className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl font-anton text-xs uppercase tracking-wider transition-all cursor-pointer ${
+            className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-3 sm:px-5 py-2.5 rounded-xl font-anton text-xs uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
               activeTab === 'received'
                 ? 'bg-[#171e19] text-[#ffe17c] shadow-md font-bold'
                 : 'text-[#171e19]/70 hover:text-[#171e19] hover:bg-black/5'
             }`}
           >
-            <Eye className="h-4 w-4" />
-            <span>Received Documents</span>
+            <Eye className="h-4 w-4 shrink-0" />
+            <span>Received</span>
             <span className={`font-mono text-[10px] px-2 py-0.5 rounded-full font-bold ${
               activeTab === 'received' ? 'bg-[#ffe17c] text-[#171e19]' : 'bg-[#171e19]/10 text-[#171e19]'
             }`}>
@@ -137,13 +137,13 @@ export default function ShareManagement() {
 
           <button
             onClick={() => setActiveTab('outbound')}
-            className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl font-anton text-xs uppercase tracking-wider transition-all cursor-pointer ${
+            className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-3 sm:px-5 py-2.5 rounded-xl font-anton text-xs uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
               activeTab === 'outbound'
                 ? 'bg-[#171e19] text-[#ffe17c] shadow-md font-bold'
                 : 'text-[#171e19]/70 hover:text-[#171e19] hover:bg-black/5'
             }`}
           >
-            <Share2 className="h-4 w-4" />
+            <Share2 className="h-4 w-4 shrink-0" />
             <span>Outbound Shares</span>
             <span className={`font-mono text-[10px] px-2 py-0.5 rounded-full font-bold ${
               activeTab === 'outbound' ? 'bg-[#ffe17c] text-[#171e19]' : 'bg-[#171e19]/10 text-[#171e19]'
@@ -187,7 +187,8 @@ export default function ShareManagement() {
           </div>
         ) : (
           <div className="bg-white rounded-2xl overflow-hidden border border-[#171e19]/10 shadow-sm">
-            <div className="overflow-x-auto">
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left text-xs font-satoshi">
                 <thead className="bg-[#171e19] text-[#b7c6c2] font-anton text-[11px] uppercase tracking-wider">
                   <tr>
@@ -277,6 +278,70 @@ export default function ShareManagement() {
                 </tbody>
               </table>
             </div>
+
+            {/* Mobile Card List View */}
+            <div className="block md:hidden divide-y divide-[#171e19]/10">
+              {filteredReceivedShares.map((share) => (
+                <div key={share._id} className="p-4 space-y-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-10 h-10 rounded-xl bg-[#ffe17c] text-[#171e19] flex items-center justify-center shrink-0 font-bold shadow-sm">
+                        <Lock className="h-5 w-5" />
+                      </div>
+                      <div className="min-w-0 truncate">
+                        <span className="font-bold text-[#171e19] text-sm block truncate" title={share.documentId?.originalFilename}>
+                          {share.documentId?.originalFilename || 'Protected Document'}
+                        </span>
+                        <span className="font-mono text-[10px] text-[#171e19]/60">
+                          {share.documentId?.pageCount || 1} pages
+                        </span>
+                      </div>
+                    </div>
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-anton uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-200 shrink-0">
+                      <ShieldCheck className="h-3 w-3 text-emerald-600" />
+                      AUTHORIZED
+                    </span>
+                  </div>
+
+                  <div className="bg-[#fafafa] p-3 rounded-xl border border-[#171e19]/10 space-y-1.5 font-mono text-xs text-[#171e19]/70">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[#171e19]/50">Sender:</span>
+                      <span className="font-bold text-[#171e19] truncate max-w-[190px]">{share.ownerEmail || 'Sender'}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[#171e19]/50">Valid Until:</span>
+                      <span className="text-[#171e19] font-semibold">{new Date(share.expiresAt).toLocaleDateString()} {new Date(share.expiresAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 pt-1">
+                    <button
+                      onClick={() => handleCopyLink(share._id)}
+                      className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl font-anton text-xs uppercase tracking-wider transition-all cursor-pointer ${
+                        copiedId === share._id
+                          ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                          : 'bg-[#171e19]/5 hover:bg-[#171e19]/10 text-[#171e19]'
+                      }`}
+                    >
+                      {copiedId === share._id ? (
+                        <Check className="h-3.5 w-3.5 text-emerald-700" />
+                      ) : (
+                        <Copy className="h-3.5 w-3.5 text-[#171e19]/70" />
+                      )}
+                      <span>{copiedId === share._id ? 'COPIED' : 'COPY LINK'}</span>
+                    </button>
+
+                    <Link
+                      to={`/view/${share._id}`}
+                      className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl font-anton text-xs uppercase tracking-wider bg-[#ffe17c] hover:brightness-105 active:scale-95 text-[#171e19] shadow-sm transition-all cursor-pointer"
+                    >
+                      <Eye className="h-4 w-4" />
+                      <span>View Document</span>
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )
       ) : (
@@ -295,7 +360,8 @@ export default function ShareManagement() {
           </div>
         ) : (
           <div className="bg-white rounded-2xl overflow-hidden border border-[#171e19]/10 shadow-sm">
-            <div className="overflow-x-auto">
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left text-xs font-satoshi">
                 <thead className="bg-[#171e19] text-[#b7c6c2] font-anton text-[11px] uppercase tracking-wider">
                   <tr>
@@ -421,6 +487,95 @@ export default function ShareManagement() {
                   })}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile Card List View */}
+            <div className="block md:hidden divide-y divide-[#171e19]/10">
+              {filteredOutboundShares.map((share) => {
+                const isRevoked = Boolean(share.revokedAt);
+                const isExpired = !isRevoked && new Date(share.expiresAt) < new Date();
+                const isActive = !isRevoked && !isExpired;
+
+                return (
+                  <div key={share._id} className="p-4 space-y-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-10 h-10 rounded-xl bg-[#171e19] text-[#ffe17c] flex items-center justify-center shrink-0 font-bold shadow-sm">
+                          <FileText className="h-5 w-5" />
+                        </div>
+                        <div className="min-w-0 truncate">
+                          <span className="font-bold text-[#171e19] text-sm block truncate" title={share.documentId?.originalFilename}>
+                            {share.documentId?.originalFilename || 'Deleted Document'}
+                          </span>
+                          <span className="font-mono text-[11px] text-[#171e19]/60">
+                            {share.viewSessionCount} {share.maxViewSessions ? `/ ${share.maxViewSessions}` : 'views'}
+                          </span>
+                        </div>
+                      </div>
+
+                      {isRevoked ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-anton uppercase tracking-wider bg-rose-50 text-rose-700 border border-rose-200 shrink-0">
+                          <XCircle className="h-3 w-3" />
+                          REVOKED
+                        </span>
+                      ) : isExpired ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-anton uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200 shrink-0">
+                          <Clock className="h-3 w-3" />
+                          EXPIRED
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-anton uppercase tracking-wider bg-[#ffe17c]/30 text-[#171e19] border border-[#ffe17c] font-bold shrink-0">
+                          <CheckCircle2 className="h-3 w-3 text-emerald-600" />
+                          ACTIVE
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="bg-[#fafafa] p-3 rounded-xl border border-[#171e19]/10 space-y-1.5 font-mono text-xs text-[#171e19]/70">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[#171e19]/50">Recipient:</span>
+                        <span className="font-bold text-[#171e19] truncate max-w-[200px]">{share.recipientEmail}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[#171e19]/50">Expires:</span>
+                        <span className="text-[#171e19]">{new Date(share.expiresAt).toLocaleDateString()} {new Date(share.expiresAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 pt-1">
+                      <button
+                        onClick={() => handleCopyLink(share._id)}
+                        className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl font-anton text-xs uppercase tracking-wider transition-all cursor-pointer ${
+                          copiedId === share._id
+                            ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                            : 'bg-[#ffe17c] hover:brightness-105 active:scale-95 text-[#171e19] shadow-sm'
+                        }`}
+                      >
+                        {copiedId === share._id ? (
+                          <>
+                            <Check className="h-3.5 w-3.5 text-emerald-700" />
+                            <span>COPIED!</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="h-3.5 w-3.5 text-[#171e19]" />
+                            <span>COPY LINK</span>
+                          </>
+                        )}
+                      </button>
+
+                      {isActive && (
+                        <button
+                          onClick={() => handleRevoke(share._id, share.recipientEmail)}
+                          className="px-4 py-2.5 rounded-xl font-anton text-xs uppercase tracking-wider bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-700 border border-rose-200 transition-all shadow-sm cursor-pointer"
+                        >
+                          Revoke
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )

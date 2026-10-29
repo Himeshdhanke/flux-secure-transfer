@@ -33,7 +33,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-white bg-grid-spec font-sans text-[#171e19]">
-      <div className="w-full max-w-md rounded-2xl bg-white border border-[#171e19]/10 p-8 sm:p-10 shadow-2xl brutalist-transition">
+      <div className="w-full max-w-md rounded-2xl bg-white border border-[#171e19]/10 p-5 sm:p-10 shadow-2xl brutalist-transition">
         {/* Brand */}
         <div className="flex flex-col items-center text-center mb-8">
           <Link to="/" className="inline-block group mb-3">

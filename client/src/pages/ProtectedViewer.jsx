@@ -497,64 +497,64 @@ export default function ProtectedViewer() {
       )}
 
       {/* Top Security & Control Ribbon */}
-      <header className="sticky top-0 z-40 w-full border-b border-white/10 bg-[#171e19]/95 backdrop-blur-md px-4 sm:px-6 py-3 shadow-md">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <header className="sticky top-0 z-40 w-full border-b border-white/10 bg-[#171e19]/95 backdrop-blur-md px-2.5 sm:px-6 py-2 sm:py-3 shadow-md">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
           
           {/* Document & Security Badges */}
-          <div className="flex items-center gap-3 truncate">
+          <div className="flex items-center gap-2 sm:gap-3 truncate min-w-0">
             <Link
               to="/dashboard"
-              className="p-2 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+              className="p-1.5 sm:p-2 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer shrink-0"
               title="Return to console"
             >
               <ArrowLeft className="h-4 w-4" />
             </Link>
 
-            <div className="truncate font-satoshi">
-              <div className="flex items-center gap-2">
-                <span className="font-anton text-lg tracking-normal uppercase text-white truncate max-w-xs sm:max-w-md">
+            <div className="truncate font-satoshi min-w-0">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="font-anton text-sm sm:text-lg tracking-normal uppercase text-white truncate max-w-[120px] sm:max-w-md">
                   {shareInfo?.originalFilename}
                 </span>
-                <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-[#ffe17c] text-[#171e19]">
+                <span className="inline-flex items-center gap-1 px-1.5 sm:px-2.5 py-0.5 rounded text-[9px] sm:text-[10px] font-mono font-bold bg-[#ffe17c] text-[#171e19] shrink-0">
                   <ShieldCheck className="h-3 w-3" />
-                  DRM ACTIVE
+                  DRM
                 </span>
               </div>
-              <div className="text-[10px] text-[#b7c6c2] font-mono truncate">
-                Recipient: <strong className="text-white">{user?.email}</strong>
+              <div className="text-[9px] sm:text-[10px] text-[#b7c6c2] font-mono truncate">
+                <strong className="text-white">{user?.email}</strong>
                 {sessionId && <span className="ml-2 hidden md:inline text-white/40">| Session: {sessionId.slice(0, 8)}...</span>}
               </div>
             </div>
           </div>
 
           {/* Page Controls & Zoom */}
-          <div className="flex items-center gap-2 sm:gap-3 font-satoshi">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0 font-satoshi">
             {/* Page Navigation */}
-            <div className="flex items-center gap-1 bg-[#272727] border border-white/10 rounded-xl p-1">
+            <div className="flex items-center gap-0.5 sm:gap-1 bg-[#272727] border border-white/10 rounded-xl p-0.5 sm:p-1">
               <button
                 onClick={handlePrevPage}
                 disabled={currentPage <= 1 || pageLoading}
-                className="p-1.5 rounded-lg text-white hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+                className="p-1 sm:p-1.5 rounded-lg text-white hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
                 title="Previous page"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </button>
 
-              <div className="px-3 font-anton text-sm uppercase text-white">
-                PAGE {currentPage} / {pageCount}
+              <div className="px-1.5 sm:px-3 font-anton text-xs sm:text-sm uppercase text-white tracking-wider">
+                {currentPage}/{pageCount}
               </div>
 
               <button
                 onClick={handleNextPage}
                 disabled={currentPage >= pageCount || pageLoading}
-                className="p-1.5 rounded-lg text-white hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+                className="p-1 sm:p-1.5 rounded-lg text-white hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
                 title="Next page"
               >
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </button>
             </div>
 
-            {/* Zoom Controls */}
+            {/* Zoom Controls (Desktop only) */}
             <div className="hidden sm:flex items-center gap-1 bg-[#272727] border border-white/10 rounded-xl p-1">
               <button
                 onClick={() => setZoom((z) => Math.max(50, z - 15))}
@@ -582,10 +582,10 @@ export default function ProtectedViewer() {
             {/* Fullscreen Button */}
             <button
               onClick={toggleFullscreen}
-              className="p-2 rounded-xl bg-[#272727] border border-white/10 text-white/70 hover:text-white transition-colors cursor-pointer"
+              className="p-1.5 sm:p-2 rounded-xl bg-[#272727] border border-white/10 text-white/70 hover:text-white transition-colors cursor-pointer shrink-0"
               title="Toggle Fullscreen"
             >
-              {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+              {isFullscreen ? <Minimize2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> : <Maximize2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
             </button>
           </div>
         </div>
@@ -593,15 +593,15 @@ export default function ProtectedViewer() {
 
       {/* Security Toast Warning Banner */}
       {toastMessage && (
-        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-5 py-3 rounded-xl bg-rose-600 text-white text-xs font-anton uppercase tracking-wider shadow-2xl animate-bounce">
+        <div className="fixed top-16 sm:top-20 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl bg-rose-600 text-white text-[11px] sm:text-xs font-anton uppercase tracking-wider shadow-2xl animate-bounce max-w-[90vw]">
           <ShieldAlert className="h-4 w-4 shrink-0 text-white" />
-          <span>{toastMessage}</span>
+          <span className="truncate">{toastMessage}</span>
         </div>
       )}
 
       {/* Main Document Viewing Canvas / Viewport */}
-      <main className="flex-1 overflow-auto flex items-center justify-center p-4 sm:p-8 bg-[#0d120f] relative">
-        <div className="relative flex items-center justify-center transition-all duration-150">
+      <main className="flex-1 overflow-auto flex items-center justify-center p-2 sm:p-8 bg-[#0d120f] relative w-full">
+        <div className="relative flex items-center justify-center transition-all duration-150 w-full max-w-full">
           {pageLoading && (
             <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/70 backdrop-blur-[2px] rounded-xl">
               <div className="flex flex-col items-center gap-2 p-5 rounded-2xl bg-[#171e19] border border-white/10 shadow-2xl">
@@ -616,14 +616,14 @@ export default function ProtectedViewer() {
           {pageImageUrl ? (
             <div
               id="protected-canvas-wrapper"
-              style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'center center' }}
-              className={`transition-all duration-150 ease-out shadow-2xl rounded-lg overflow-hidden border border-white/10 bg-white relative ${
+              style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'center top' }}
+              className={`transition-all duration-150 ease-out shadow-2xl rounded-lg overflow-hidden border border-white/10 bg-white relative max-w-full ${
                 isWindowBlurred || isScreenBlanked ? 'blur-3xl opacity-0 pointer-events-none' : ''
               }`}
             >
               <canvas
                 ref={canvasRef}
-                className="max-w-[90vw] sm:max-w-4xl h-auto block pointer-events-none select-none protected-canvas"
+                className="w-full max-w-full sm:max-w-4xl h-auto block pointer-events-none select-none protected-canvas"
                 onContextMenu={(e) => e.preventDefault()}
                 onDragStart={(e) => e.preventDefault()}
               />
@@ -635,16 +635,16 @@ export default function ProtectedViewer() {
       </main>
 
       {/* Bottom DRM Attribution Ribbon */}
-      <footer className="border-t border-white/10 bg-[#171e19] px-6 py-2.5 text-center text-xs font-satoshi text-[#b7c6c2] flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-2 text-[#ffe17c] font-bold">
-          <ShieldCheck className="h-4 w-4" />
-          <span>Dynamic Watermark Active — Forensically Bound to {user?.email}</span>
+      <footer className="border-t border-white/10 bg-[#171e19] px-3 sm:px-6 py-2 text-center text-[10px] sm:text-xs font-satoshi text-[#b7c6c2] flex flex-col sm:flex-row items-center justify-between gap-1 sm:gap-2">
+        <div className="flex items-center gap-1.5 text-[#ffe17c] font-bold text-center">
+          <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
+          <span className="truncate max-w-[280px] sm:max-w-none">Watermark Forensically Bound to {user?.email}</span>
         </div>
 
-        <div className="text-[#b7c6c2]/70 flex items-center gap-3 font-mono text-[11px]">
-          <span>Protected PDF Stream (No Raw Binary)</span>
+        <div className="text-[#b7c6c2]/70 flex items-center gap-2 font-mono text-[9px] sm:text-[11px]">
+          <span>Protected PDF Stream</span>
           <span>•</span>
-          <span>AES-256-GCM Hardware Envelope</span>
+          <span>AES-256-GCM Envelope</span>
         </div>
       </footer>
     </div>

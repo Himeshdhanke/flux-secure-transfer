@@ -69,8 +69,8 @@ export default function ShareModal({ isOpen, onClose, document, onShareCreated }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#171e19]/60 backdrop-blur-sm animate-fade-in font-sans">
-      <div className="w-full max-w-lg rounded-2xl bg-white border border-[#171e19]/10 p-6 sm:p-8 shadow-2xl relative brutalist-transition">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#171e19]/60 backdrop-blur-sm animate-fade-in font-sans">
+      <div className="w-full max-w-lg max-h-[92vh] overflow-y-auto rounded-2xl bg-white border border-[#171e19]/10 p-5 sm:p-8 shadow-2xl relative brutalist-transition">
         
         {/* Close Button */}
         <button

@@ -142,16 +142,16 @@ export default function Documents() {
       {/* Tabs & Search */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         {/* Tab Buttons */}
-        <div className="flex items-center gap-2 bg-[#171e19]/5 p-1 rounded-2xl w-fit">
+        <div className="flex items-center gap-1.5 sm:gap-2 bg-[#171e19]/5 p-1 rounded-2xl w-full sm:w-fit overflow-x-auto">
           <button
             onClick={() => setActiveTab('received')}
-            className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl font-anton text-xs uppercase tracking-wider transition-all cursor-pointer ${
+            className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-3 sm:px-5 py-2.5 rounded-xl font-anton text-xs uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
               activeTab === 'received'
                 ? 'bg-[#171e19] text-[#ffe17c] shadow-md font-bold'
                 : 'text-[#171e19]/70 hover:text-[#171e19] hover:bg-black/5'
             }`}
           >
-            <Eye className="h-4 w-4" />
+            <Eye className="h-4 w-4 shrink-0" />
             <span>Shared With Me</span>
             <span className={`font-mono text-[10px] px-2 py-0.5 rounded-full font-bold ${
               activeTab === 'received' ? 'bg-[#ffe17c] text-[#171e19]' : 'bg-[#171e19]/10 text-[#171e19]'
@@ -162,14 +162,14 @@ export default function Documents() {
 
           <button
             onClick={() => setActiveTab('vault')}
-            className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl font-anton text-xs uppercase tracking-wider transition-all cursor-pointer ${
+            className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-3 sm:px-5 py-2.5 rounded-xl font-anton text-xs uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
               activeTab === 'vault'
                 ? 'bg-[#171e19] text-[#ffe17c] shadow-md font-bold'
                 : 'text-[#171e19]/70 hover:text-[#171e19] hover:bg-black/5'
             }`}
           >
-            <FileText className="h-4 w-4" />
-            <span>My Vault (Uploaded)</span>
+            <FileText className="h-4 w-4 shrink-0" />
+            <span>My Vault</span>
             <span className={`font-mono text-[10px] px-2 py-0.5 rounded-full font-bold ${
               activeTab === 'vault' ? 'bg-[#ffe17c] text-[#171e19]' : 'bg-[#171e19]/10 text-[#171e19]'
             }`}>
@@ -263,10 +263,10 @@ export default function Documents() {
                 </div>
 
                 {/* Primary Actions: COPY LINK & VIEW DOCUMENT */}
-                <div className="mt-6 pt-4 border-t border-[#171e19]/10 flex items-center justify-between gap-2">
+                <div className="mt-6 pt-4 border-t border-[#171e19]/10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
                   <button
                     onClick={() => handleCopyLink(share._id)}
-                    className={`flex items-center justify-center gap-1.5 px-3.5 py-3 rounded-xl font-anton text-xs uppercase tracking-wider transition-all cursor-pointer ${
+                    className={`flex items-center justify-center gap-1.5 px-3.5 py-2.5 sm:py-3 rounded-xl font-anton text-xs uppercase tracking-wider transition-all cursor-pointer ${
                       copiedId === share._id
                         ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
                         : 'bg-[#171e19]/5 hover:bg-[#171e19]/10 text-[#171e19]'
@@ -283,7 +283,7 @@ export default function Documents() {
 
                   <Link
                     to={`/view/${share._id}`}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#ffe17c] hover:brightness-105 active:scale-95 text-[#171e19] font-anton text-xs uppercase tracking-wider transition-all shadow-md cursor-pointer"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 sm:py-3 rounded-xl bg-[#ffe17c] hover:brightness-105 active:scale-95 text-[#171e19] font-anton text-xs uppercase tracking-wider transition-all shadow-md cursor-pointer"
                   >
                     <Eye className="h-4 w-4" />
                     <span>View Document</span>
@@ -367,10 +367,10 @@ export default function Documents() {
 
                 {/* Action Buttons: View, Create Share, Delete */}
                 <div className="mt-6 pt-4 border-t border-[#171e19]/10 flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-1 sm:flex-initial">
                     <button
                       onClick={() => handlePreviewDoc(doc._id)}
-                      className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#171e19] hover:bg-black text-[#ffe17c] font-anton text-xs uppercase tracking-wider transition-all shadow-sm cursor-pointer"
+                      className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-2.5 sm:py-2 rounded-lg bg-[#171e19] hover:bg-black text-[#ffe17c] font-anton text-xs uppercase tracking-wider transition-all shadow-sm cursor-pointer"
                       title="View document"
                     >
                       <Eye className="h-3.5 w-3.5" />
@@ -379,7 +379,7 @@ export default function Documents() {
 
                     <button
                       onClick={() => setShareDoc(doc)}
-                      className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#ffe17c] hover:brightness-105 text-[#171e19] font-anton text-xs uppercase tracking-wider transition-all shadow-sm cursor-pointer"
+                      className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-2.5 sm:py-2 rounded-lg bg-[#ffe17c] hover:brightness-105 text-[#171e19] font-anton text-xs uppercase tracking-wider transition-all shadow-sm cursor-pointer"
                     >
                       <Share2 className="h-3.5 w-3.5" />
                       <span>Share</span>
@@ -388,7 +388,7 @@ export default function Documents() {
 
                   <button
                     onClick={() => handleDelete(doc._id, doc.originalFilename)}
-                    className="p-2 rounded-lg text-[#171e19]/40 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                    className="p-2 sm:p-2 rounded-lg text-[#171e19]/40 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer shrink-0"
                     title="Delete encrypted document"
                   >
                     <Trash2 className="h-4 w-4" />
