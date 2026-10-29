@@ -14,10 +14,10 @@ export default function Navbar() {
   };
 
   const navLinks = [
-    { name: 'OVERVIEW', path: '/dashboard', icon: Shield },
-    { name: 'DOCUMENTS', path: '/documents', icon: FileText },
-    { name: 'ACTIVE SHARES', path: '/shares', icon: Share2 },
-    { name: 'AUDIT TRAIL', path: '/activity', icon: Activity },
+    { name: 'OVERVIEW', shortName: 'OVERVIEW', path: '/dashboard', icon: Shield },
+    { name: 'DOCUMENTS', shortName: 'DOCS', path: '/documents', icon: FileText },
+    { name: 'ACTIVE SHARES', shortName: 'SHARES', path: '/shares', icon: Share2 },
+    { name: 'AUDIT TRAIL', shortName: 'AUDIT', path: '/activity', icon: Activity },
   ];
 
   return (
@@ -71,13 +71,13 @@ export default function Navbar() {
                 </span>
               </div>
               
-              <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-[#171e19] text-[#ffe17c] border border-black/10 flex items-center justify-center font-anton text-xs sm:text-sm font-bold shadow-sm">
+              <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-[#171e19] text-[#ffe17c] border border-black/10 flex items-center justify-center font-anton text-xs sm:text-sm font-bold shadow-sm shrink-0">
                 {user?.email?.[0]?.toUpperCase() || 'U'}
               </div>
 
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-anton uppercase tracking-wider text-[#171e19]/70 hover:text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 transition-all cursor-pointer"
+                className="h-8 sm:h-9 flex items-center gap-1.5 px-2.5 sm:px-3 rounded-xl text-xs font-anton uppercase tracking-wider text-[#171e19]/70 hover:text-rose-600 hover:bg-rose-50 border border-[#171e19]/10 hover:border-rose-200 transition-all cursor-pointer shrink-0"
                 title="Sign out"
               >
                 <LogOut className="h-3.5 w-3.5" />
@@ -105,7 +105,7 @@ export default function Navbar() {
 
       {/* Mobile Bottom Navigation Bar (Visible only on phone screens < md) */}
       {isAuthenticated && (
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-[#171e19]/15 px-1 py-1.5 flex items-center justify-around shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-[#171e19]/15 px-2 py-1 flex items-center justify-between shadow-[0_-4px_16px_rgba(0,0,0,0.08)]">
           {navLinks.map((link) => {
             const Icon = link.icon;
             const isActive = location.pathname === link.path;
@@ -113,14 +113,14 @@ export default function Navbar() {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`flex flex-col items-center justify-center py-1.5 px-3 rounded-xl transition-all ${
+                className={`flex-1 flex flex-col items-center justify-center py-1.5 rounded-xl transition-all ${
                   isActive
-                    ? 'text-[#171e19] font-bold bg-[#ffe17c] shadow-sm scale-105'
+                    ? 'text-[#171e19] font-bold bg-[#ffe17c] shadow-sm'
                     : 'text-[#171e19]/60 hover:text-[#171e19]'
                 }`}
               >
-                <Icon className={`h-4 w-4 ${isActive ? 'text-[#171e19]' : 'text-[#171e19]/70'}`} />
-                <span className="font-anton text-[8px] uppercase tracking-wider mt-0.5">{link.name}</span>
+                <Icon className={`h-4 w-4 shrink-0 ${isActive ? 'text-[#171e19]' : 'text-[#171e19]/70'}`} />
+                <span className="font-anton text-[9px] uppercase tracking-wider mt-0.5">{link.shortName || link.name}</span>
               </Link>
             );
           })}

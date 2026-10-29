@@ -312,10 +312,11 @@ export default function ShareManagement() {
                   <div className="flex items-center gap-2 pt-1">
                     <button
                       onClick={() => handleCopyLink(share._id)}
-                      className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl font-anton text-xs uppercase tracking-wider transition-all cursor-pointer ${copiedId === share._id
+                      className={`h-10 flex-1 flex items-center justify-center gap-1.5 px-3 rounded-xl font-anton text-xs uppercase tracking-wider transition-all cursor-pointer ${
+                        copiedId === share._id
                           ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
                           : 'bg-[#171e19]/5 hover:bg-[#171e19]/10 text-[#171e19]'
-                        }`}
+                      }`}
                     >
                       {copiedId === share._id ? (
                         <Check className="h-3.5 w-3.5 text-emerald-700" />
@@ -327,7 +328,7 @@ export default function ShareManagement() {
 
                     <Link
                       to={`/view/${share._id}`}
-                      className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl font-anton text-xs uppercase tracking-wider bg-[#ffe17c] hover:brightness-105 active:scale-95 text-[#171e19] shadow-sm transition-all cursor-pointer"
+                      className="h-10 flex-1 flex items-center justify-center gap-1.5 px-3 rounded-xl font-anton text-xs uppercase tracking-wider bg-[#ffe17c] hover:brightness-105 active:scale-95 text-[#171e19] shadow-sm transition-all cursor-pointer"
                     >
                       <Eye className="h-4 w-4" />
                       <span>View Document</span>
@@ -538,10 +539,11 @@ export default function ShareManagement() {
                 <div className="flex items-center gap-2 pt-1">
                   <button
                     onClick={() => handleCopyLink(share._id)}
-                    className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl font-anton text-xs uppercase tracking-wider transition-all cursor-pointer ${copiedId === share._id
+                    className={`h-10 flex-1 flex items-center justify-center gap-1.5 px-3 rounded-xl font-anton text-xs uppercase tracking-wider transition-all cursor-pointer ${
+                      copiedId === share._id
                         ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
                         : 'bg-[#ffe17c] hover:brightness-105 active:scale-95 text-[#171e19] shadow-sm'
-                      }`}
+                    }`}
                   >
                     {copiedId === share._id ? (
                       <>
@@ -559,7 +561,7 @@ export default function ShareManagement() {
                   {isActive && (
                     <button
                       onClick={() => handleRevoke(share._id, share.recipientEmail)}
-                      className="px-4 py-2.5 rounded-xl font-anton text-xs uppercase tracking-wider bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-700 border border-rose-200 transition-all shadow-sm cursor-pointer"
+                      className="h-10 px-4 rounded-xl font-anton text-xs uppercase tracking-wider bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-700 border border-rose-200 transition-all shadow-sm cursor-pointer shrink-0"
                     >
                       Revoke
                     </button>
