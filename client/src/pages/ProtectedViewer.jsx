@@ -91,7 +91,7 @@ export default function ProtectedViewer() {
     }
   };
 
-  // 1. Window Blur & Visibility Shield (Deters Snipping Tool & external capture software)
+  // 1. Window Blur, Pagehide & Visibility Shield (Deters Snipping Tool, multitasking & background capture)
   useEffect(() => {
     const handleBlur = () => {
       blankCanvas();
@@ -100,7 +100,7 @@ export default function ProtectedViewer() {
     };
 
     const handleFocus = () => {
-      // Keep shield up until deliberate click to restore or restore if no violation
+      // Keep shield up until deliberate click to restore
     };
 
     const handleVisibilityChange = () => {
@@ -113,11 +113,13 @@ export default function ProtectedViewer() {
 
     window.addEventListener('blur', handleBlur);
     window.addEventListener('focus', handleFocus);
+    window.addEventListener('pagehide', handleBlur);
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
       window.removeEventListener('blur', handleBlur);
       window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('pagehide', handleBlur);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       document.body.classList.remove('drm-screen-blanked');
     };
@@ -232,14 +234,24 @@ export default function ProtectedViewer() {
       }
     };
 
+    // 7. Multi-touch screenshot gesture detection (3-finger swipe used on Android devices)
+    const handleTouchStart = (e) => {
+      if (e.touches && e.touches.length >= 3) {
+        e.preventDefault();
+        triggerViolation('MULTI_TOUCH_GESTURE', '3-Finger screenshot gesture');
+      }
+    };
+
     // Use capture phase to intercept before OS or browser defaults
     window.addEventListener('keydown', handleKeyDown, true);
     window.addEventListener('keyup', handleKeyUp, true);
+    window.addEventListener('touchstart', handleTouchStart, { passive: false });
     document.addEventListener('copy', handleCopy, true);
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown, true);
       window.removeEventListener('keyup', handleKeyUp, true);
+      window.removeEventListener('touchstart', handleTouchStart);
       document.removeEventListener('copy', handleCopy, true);
     };
   }, [token, user, currentPage]);

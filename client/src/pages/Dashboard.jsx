@@ -100,17 +100,17 @@ export default function Dashboard() {
   const totalSessionsCount = shares.reduce((sum, s) => sum + (s.viewSessionCount || 0), 0);
 
   return (
-    <div className="space-y-8 font-sans">
+    <div className="space-y-8 font-sans w-full max-w-full overflow-x-hidden">
       {/* Top Banner & Quick Action */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#171e19]/10">
-        <div>
+        <div className="min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#ffe17c] animate-pulse"></span>
-            <span className="font-mono text-[10px] uppercase font-bold tracking-widest text-[#171e19]/60">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#ffe17c] animate-pulse shrink-0"></span>
+            <span className="font-mono text-[10px] uppercase font-bold tracking-widest text-[#171e19]/60 truncate">
               REAL-TIME CRYPTO TELEMETRY
             </span>
           </div>
-          <h1 className="font-anton text-4xl sm:text-5xl uppercase tracking-normal text-[#171e19] leading-none">
+          <h1 className="font-anton text-3xl sm:text-5xl uppercase tracking-normal text-[#171e19] leading-none">
             SECURITY OVERVIEW
           </h1>
           <p className="font-satoshi text-xs sm:text-sm text-[#171e19]/70 mt-1.5 font-medium">
@@ -120,7 +120,7 @@ export default function Dashboard() {
 
         <button
           onClick={() => setIsUploadOpen(true)}
-          className="flex items-center gap-2 px-6 py-3 rounded-xl font-anton text-base uppercase tracking-wider bg-[#ffe17c] text-[#171e19] shadow-md hover:brightness-105 active:scale-95 transition-all self-start sm:self-auto cursor-pointer"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-anton text-sm sm:text-base uppercase tracking-wider bg-[#ffe17c] text-[#171e19] shadow-md hover:brightness-105 active:scale-95 transition-all cursor-pointer shrink-0"
         >
           <Plus className="h-5 w-5 text-[#171e19]" />
           <span>Upload PDF</span>
@@ -230,12 +230,12 @@ export default function Dashboard() {
 
           {/* Section A: Documents Shared With You (Receiver View) */}
           <div className="space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-[#171e19]/10">
-              <h2 className="font-anton text-2xl uppercase tracking-normal text-[#171e19] flex items-center gap-2">
-                <Eye className="h-5 w-5 text-[#171e19]" />
-                <span>DOCUMENTS SHARED WITH YOU</span>
+            <div className="flex items-center justify-between pb-2 border-b border-[#171e19]/10 gap-2">
+              <h2 className="font-anton text-base sm:text-2xl uppercase tracking-normal text-[#171e19] flex items-center gap-2 min-w-0">
+                <Eye className="h-4 w-4 sm:h-5 sm:w-5 text-[#171e19] shrink-0" />
+                <span className="truncate">DOCUMENTS SHARED WITH YOU</span>
               </h2>
-              <span className="font-mono text-xs font-bold text-[#171e19] bg-[#ffe17c] px-2.5 py-1 rounded tracking-normal">
+              <span className="font-mono text-[10px] sm:text-xs font-bold text-[#171e19] bg-[#ffe17c] px-2 sm:px-2.5 py-0.5 sm:py-1 rounded shrink-0">
                 {receivedShares.length} {receivedShares.length === 1 ? 'FILE' : 'FILES'}
               </span>
             </div>
@@ -313,16 +313,16 @@ export default function Dashboard() {
 
           {/* Section B: Vault Encrypted Documents (Uploaded) */}
           <div className="space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-[#171e19]/10">
-              <h2 className="font-anton text-2xl uppercase tracking-normal text-[#171e19] flex items-center gap-2">
-                <FileText className="h-5 w-5 text-[#171e19]" />
-                <span>MY ENCRYPTED VAULT ({documents.length})</span>
+            <div className="flex items-center justify-between pb-2 border-b border-[#171e19]/10 gap-2">
+              <h2 className="font-anton text-base sm:text-2xl uppercase tracking-normal text-[#171e19] flex items-center gap-2 min-w-0">
+                <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-[#171e19] shrink-0" />
+                <span className="truncate">MY ENCRYPTED VAULT ({documents.length})</span>
               </h2>
               <Link
                 to="/documents"
-                className="font-satoshi text-xs font-bold text-[#171e19] hover:underline flex items-center gap-1 uppercase tracking-wider"
+                className="font-satoshi text-xs font-bold text-[#171e19] hover:underline flex items-center gap-1 uppercase tracking-wider shrink-0"
               >
-                <span>Manage Library</span>
+                <span>Manage</span>
                 <ArrowUpRight className="h-3.5 w-3.5" />
               </Link>
             </div>
@@ -407,14 +407,14 @@ export default function Dashboard() {
 
         {/* Right 1 Col: Recent Audit / Security Activity */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-[#171e19]/10">
-            <h2 className="font-anton text-2xl uppercase tracking-normal text-[#171e19] flex items-center gap-2">
-              <Activity className="h-5 w-5 text-[#171e19]" />
-              <span>LIVE AUDIT STREAM</span>
+          <div className="flex items-center justify-between pb-2 border-b border-[#171e19]/10 gap-2">
+            <h2 className="font-anton text-base sm:text-2xl uppercase tracking-normal text-[#171e19] flex items-center gap-2 min-w-0">
+              <Activity className="h-4 w-4 sm:h-5 sm:w-5 text-[#171e19] shrink-0" />
+              <span className="truncate">LIVE AUDIT STREAM</span>
             </h2>
             <Link
               to="/activity"
-              className="font-satoshi text-xs font-bold text-[#171e19] hover:underline uppercase tracking-wider"
+              className="font-satoshi text-xs font-bold text-[#171e19] hover:underline uppercase tracking-wider shrink-0"
             >
               View Feed
             </Link>

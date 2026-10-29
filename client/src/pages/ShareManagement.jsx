@@ -120,34 +120,30 @@ export default function ShareManagement() {
         <div className="flex items-center gap-1.5 sm:gap-2 bg-[#171e19]/5 p-1 rounded-2xl w-full sm:w-fit overflow-x-auto">
           <button
             onClick={() => setActiveTab('received')}
-            className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-3 sm:px-5 py-2.5 rounded-xl font-anton text-xs uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
-              activeTab === 'received'
+            className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-3 sm:px-5 py-2.5 rounded-xl font-anton text-xs uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${activeTab === 'received'
                 ? 'bg-[#171e19] text-[#ffe17c] shadow-md font-bold'
                 : 'text-[#171e19]/70 hover:text-[#171e19] hover:bg-black/5'
-            }`}
+              }`}
           >
             <Eye className="h-4 w-4 shrink-0" />
             <span>Received</span>
-            <span className={`font-mono text-[10px] px-2 py-0.5 rounded-full font-bold ${
-              activeTab === 'received' ? 'bg-[#ffe17c] text-[#171e19]' : 'bg-[#171e19]/10 text-[#171e19]'
-            }`}>
+            <span className={`font-mono text-[10px] px-2 py-0.5 rounded-full font-bold ${activeTab === 'received' ? 'bg-[#ffe17c] text-[#171e19]' : 'bg-[#171e19]/10 text-[#171e19]'
+              }`}>
               {receivedShares.length}
             </span>
           </button>
 
           <button
             onClick={() => setActiveTab('outbound')}
-            className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-3 sm:px-5 py-2.5 rounded-xl font-anton text-xs uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
-              activeTab === 'outbound'
+            className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-3 sm:px-5 py-2.5 rounded-xl font-anton text-xs uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${activeTab === 'outbound'
                 ? 'bg-[#171e19] text-[#ffe17c] shadow-md font-bold'
                 : 'text-[#171e19]/70 hover:text-[#171e19] hover:bg-black/5'
-            }`}
+              }`}
           >
             <Share2 className="h-4 w-4 shrink-0" />
             <span>Outbound Shares</span>
-            <span className={`font-mono text-[10px] px-2 py-0.5 rounded-full font-bold ${
-              activeTab === 'outbound' ? 'bg-[#ffe17c] text-[#171e19]' : 'bg-[#171e19]/10 text-[#171e19]'
-            }`}>
+            <span className={`font-mono text-[10px] px-2 py-0.5 rounded-full font-bold ${activeTab === 'outbound' ? 'bg-[#ffe17c] text-[#171e19]' : 'bg-[#171e19]/10 text-[#171e19]'
+              }`}>
               {shares.length}
             </span>
           </button>
@@ -249,11 +245,10 @@ export default function ShareManagement() {
                         <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() => handleCopyLink(share._id)}
-                            className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg font-anton text-xs uppercase tracking-wider transition-all cursor-pointer ${
-                              copiedId === share._id
+                            className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg font-anton text-xs uppercase tracking-wider transition-all cursor-pointer ${copiedId === share._id
                                 ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
                                 : 'bg-[#171e19]/5 hover:bg-[#171e19]/10 text-[#171e19]'
-                            }`}
+                              }`}
                             title="Copy protected view link"
                           >
                             {copiedId === share._id ? (
@@ -317,11 +312,10 @@ export default function ShareManagement() {
                   <div className="flex items-center gap-2 pt-1">
                     <button
                       onClick={() => handleCopyLink(share._id)}
-                      className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl font-anton text-xs uppercase tracking-wider transition-all cursor-pointer ${
-                        copiedId === share._id
+                      className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl font-anton text-xs uppercase tracking-wider transition-all cursor-pointer ${copiedId === share._id
                           ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
                           : 'bg-[#171e19]/5 hover:bg-[#171e19]/10 text-[#171e19]'
-                      }`}
+                        }`}
                     >
                       {copiedId === share._id ? (
                         <Check className="h-3.5 w-3.5 text-emerald-700" />
@@ -345,240 +339,238 @@ export default function ShareManagement() {
           </div>
         )
       ) : (
-        /* TAB 2: OUTBOUND SHARES (CREATED BY ME - SENDER VIEW) */
-        filteredOutboundShares.length === 0 ? (
-          <div className="bg-white p-16 rounded-2xl text-center border-2 border-dashed border-[#171e19]/15">
-            <div className="h-14 w-14 rounded-2xl bg-[#171e19]/5 flex items-center justify-center text-[#171e19] mx-auto mb-3">
-              <Share2 className="h-7 w-7" />
-            </div>
-            <h3 className="font-anton text-xl uppercase text-[#171e19]">
-              {search ? 'No matching share links found' : 'No share links created yet'}
-            </h3>
-            <p className="font-satoshi text-xs text-[#171e19]/60 mt-1">
-              Navigate to your Document Library and click "Create Share" to issue restricted recipient links.
-            </p>
-          </div>
-        ) : (
-          <div className="bg-white rounded-2xl overflow-hidden border border-[#171e19]/10 shadow-sm">
-            {/* Desktop Table View */}
-            <div className="hidden md:block overflow-x-auto">
-              <table className="w-full text-left text-xs font-satoshi">
-                <thead className="bg-[#171e19] text-[#b7c6c2] font-anton text-[11px] uppercase tracking-wider">
-                  <tr>
-                    <th className="px-6 py-4">DOCUMENT</th>
-                    <th className="px-6 py-4">RESTRICTED RECIPIENT</th>
-                    <th className="px-6 py-4">STATUS</th>
-                    <th className="px-6 py-4">SESSIONS</th>
-                    <th className="px-6 py-4">EXPIRES (UTC)</th>
-                    <th className="px-6 py-4 text-right">ACTIONS</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#171e19]/10">
-                  {filteredOutboundShares.map((share) => {
-                    const isRevoked = Boolean(share.revokedAt);
-                    const isExpired = !isRevoked && new Date(share.expiresAt) < new Date();
-                    const isActive = !isRevoked && !isExpired;
-
-                    return (
-                      <tr key={share._id} className="hover:bg-[#fafafa] transition-colors">
-                        {/* Document */}
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-3 truncate max-w-xs">
-                            <div className="w-8 h-8 rounded-lg bg-[#171e19] text-[#ffe17c] flex items-center justify-center shrink-0 font-bold">
-                              <FileText className="h-4 w-4" />
-                            </div>
-                            <span className="font-bold text-[#171e19] truncate text-sm">
-                              {share.documentId?.originalFilename || 'Deleted Document'}
-                            </span>
-                          </div>
-                        </td>
-
-                        {/* Recipient */}
-                        <td className="px-6 py-4">
-                          <span className="font-mono text-xs font-bold text-[#171e19] bg-[#171e19]/5 px-2 py-1 rounded">
-                            {share.recipientEmail}
-                          </span>
-                        </td>
-
-                        {/* Status */}
-                        <td className="px-6 py-4">
-                          {isRevoked ? (
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-anton uppercase tracking-wider bg-rose-50 text-rose-700 border border-rose-200">
-                              <XCircle className="h-3.5 w-3.5" />
-                              REVOKED
-                            </span>
-                          ) : isExpired ? (
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-anton uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200">
-                              <Clock className="h-3.5 w-3.5" />
-                              EXPIRED
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-anton uppercase tracking-wider bg-[#ffe17c]/30 text-[#171e19] border border-[#ffe17c] font-bold">
-                              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                              ACTIVE
-                            </span>
-                          )}
-                        </td>
-
-                        {/* Sessions */}
-                        <td className="px-6 py-4 font-mono text-xs font-semibold text-[#171e19]/70">
-                          {share.viewSessionCount} {share.maxViewSessions ? `/ ${share.maxViewSessions}` : 'views'}
-                        </td>
-
-                        {/* Expiry */}
-                        <td className="px-6 py-4">
-                          <div className="font-mono text-xs text-[#171e19]">
-                            {new Date(share.expiresAt).toLocaleDateString()}
-                          </div>
-                          <div className="font-mono text-[10px] text-[#171e19]/50">
-                            {new Date(share.expiresAt).toLocaleTimeString()}
-                          </div>
-                        </td>
-
-                        {/* Actions: COPY LINK & REVOKE */}
-                        <td className="px-6 py-4 text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            {isActive ? (
-                              <>
-                                <button
-                                  onClick={() => handleCopyLink(share._id)}
-                                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-anton text-xs uppercase tracking-wider transition-all shadow-sm cursor-pointer ${
-                                    copiedId === share._id
-                                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
-                                      : 'bg-[#ffe17c] hover:brightness-105 active:scale-95 text-[#171e19]'
-                                  }`}
-                                  title="Copy share link to send to recipient"
-                                >
-                                  {copiedId === share._id ? (
-                                    <>
-                                      <Check className="h-3.5 w-3.5 text-emerald-700" />
-                                      <span>COPIED!</span>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Copy className="h-3.5 w-3.5 text-[#171e19]" />
-                                      <span>COPY LINK</span>
-                                    </>
-                                  )}
-                                </button>
-
-                                <button
-                                  onClick={() => handleRevoke(share._id, share.recipientEmail)}
-                                  className="px-3 py-1.5 rounded-lg font-anton text-xs uppercase tracking-wider bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-700 border border-rose-200 transition-all shadow-sm cursor-pointer"
-                                  title="Revoke recipient access immediately"
-                                >
-                                  Revoke
-                                </button>
-                              </>
-                            ) : (
-                              <button
-                                onClick={() => handleCopyLink(share._id)}
-                                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg font-anton text-[11px] uppercase tracking-wider bg-[#171e19]/5 hover:bg-[#171e19]/10 text-[#171e19]/60 cursor-pointer"
-                                title="Copy inactive link reference"
-                              >
-                                <Copy className="h-3 w-3" />
-                                <span>{copiedId === share._id ? 'COPIED' : 'COPY'}</span>
-                              </button>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Mobile Card List View */}
-            <div className="block md:hidden divide-y divide-[#171e19]/10">
+      /* TAB 2: OUTBOUND SHARES (CREATED BY ME - SENDER VIEW) */
+      filteredOutboundShares.length === 0 ? (
+      <div className="bg-white p-16 rounded-2xl text-center border-2 border-dashed border-[#171e19]/15">
+        <div className="h-14 w-14 rounded-2xl bg-[#171e19]/5 flex items-center justify-center text-[#171e19] mx-auto mb-3">
+          <Share2 className="h-7 w-7" />
+        </div>
+        <h3 className="font-anton text-xl uppercase text-[#171e19]">
+          {search ? 'No matching share links found' : 'No share links created yet'}
+        </h3>
+        <p className="font-satoshi text-xs text-[#171e19]/60 mt-1">
+          Navigate to your Document Library and click "Create Share" to issue restricted recipient links.
+        </p>
+      </div>
+      ) : (
+      <div className="bg-white rounded-2xl overflow-hidden border border-[#171e19]/10 shadow-sm">
+        {/* Desktop Table View */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full text-left text-xs font-satoshi">
+            <thead className="bg-[#171e19] text-[#b7c6c2] font-anton text-[11px] uppercase tracking-wider">
+              <tr>
+                <th className="px-6 py-4">DOCUMENT</th>
+                <th className="px-6 py-4">RESTRICTED RECIPIENT</th>
+                <th className="px-6 py-4">STATUS</th>
+                <th className="px-6 py-4">SESSIONS</th>
+                <th className="px-6 py-4">EXPIRES (UTC)</th>
+                <th className="px-6 py-4 text-right">ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#171e19]/10">
               {filteredOutboundShares.map((share) => {
                 const isRevoked = Boolean(share.revokedAt);
                 const isExpired = !isRevoked && new Date(share.expiresAt) < new Date();
                 const isActive = !isRevoked && !isExpired;
 
                 return (
-                  <div key={share._id} className="p-4 space-y-3">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-10 h-10 rounded-xl bg-[#171e19] text-[#ffe17c] flex items-center justify-center shrink-0 font-bold shadow-sm">
-                          <FileText className="h-5 w-5" />
+                  <tr key={share._id} className="hover:bg-[#fafafa] transition-colors">
+                    {/* Document */}
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3 truncate max-w-xs">
+                        <div className="w-8 h-8 rounded-lg bg-[#171e19] text-[#ffe17c] flex items-center justify-center shrink-0 font-bold">
+                          <FileText className="h-4 w-4" />
                         </div>
-                        <div className="min-w-0 truncate">
-                          <span className="font-bold text-[#171e19] text-sm block truncate" title={share.documentId?.originalFilename}>
-                            {share.documentId?.originalFilename || 'Deleted Document'}
-                          </span>
-                          <span className="font-mono text-[11px] text-[#171e19]/60">
-                            {share.viewSessionCount} {share.maxViewSessions ? `/ ${share.maxViewSessions}` : 'views'}
-                          </span>
-                        </div>
+                        <span className="font-bold text-[#171e19] truncate text-sm">
+                          {share.documentId?.originalFilename || 'Deleted Document'}
+                        </span>
                       </div>
+                    </td>
 
+                    {/* Recipient */}
+                    <td className="px-6 py-4">
+                      <span className="font-mono text-xs font-bold text-[#171e19] bg-[#171e19]/5 px-2 py-1 rounded">
+                        {share.recipientEmail}
+                      </span>
+                    </td>
+
+                    {/* Status */}
+                    <td className="px-6 py-4">
                       {isRevoked ? (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-anton uppercase tracking-wider bg-rose-50 text-rose-700 border border-rose-200 shrink-0">
-                          <XCircle className="h-3 w-3" />
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-anton uppercase tracking-wider bg-rose-50 text-rose-700 border border-rose-200">
+                          <XCircle className="h-3.5 w-3.5" />
                           REVOKED
                         </span>
                       ) : isExpired ? (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-anton uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200 shrink-0">
-                          <Clock className="h-3 w-3" />
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-anton uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200">
+                          <Clock className="h-3.5 w-3.5" />
                           EXPIRED
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-anton uppercase tracking-wider bg-[#ffe17c]/30 text-[#171e19] border border-[#ffe17c] font-bold shrink-0">
-                          <CheckCircle2 className="h-3 w-3 text-emerald-600" />
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-anton uppercase tracking-wider bg-[#ffe17c]/30 text-[#171e19] border border-[#ffe17c] font-bold">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
                           ACTIVE
                         </span>
                       )}
-                    </div>
+                    </td>
 
-                    <div className="bg-[#fafafa] p-3 rounded-xl border border-[#171e19]/10 space-y-1.5 font-mono text-xs text-[#171e19]/70">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[#171e19]/50">Recipient:</span>
-                        <span className="font-bold text-[#171e19] truncate max-w-[200px]">{share.recipientEmail}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-[#171e19]/50">Expires:</span>
-                        <span className="text-[#171e19]">{new Date(share.expiresAt).toLocaleDateString()} {new Date(share.expiresAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                      </div>
-                    </div>
+                    {/* Sessions */}
+                    <td className="px-6 py-4 font-mono text-xs font-semibold text-[#171e19]/70">
+                      {share.viewSessionCount} {share.maxViewSessions ? `/ ${share.maxViewSessions}` : 'views'}
+                    </td>
 
-                    <div className="flex items-center gap-2 pt-1">
-                      <button
-                        onClick={() => handleCopyLink(share._id)}
-                        className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl font-anton text-xs uppercase tracking-wider transition-all cursor-pointer ${
-                          copiedId === share._id
-                            ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
-                            : 'bg-[#ffe17c] hover:brightness-105 active:scale-95 text-[#171e19] shadow-sm'
-                        }`}
-                      >
-                        {copiedId === share._id ? (
+                    {/* Expiry */}
+                    <td className="px-6 py-4">
+                      <div className="font-mono text-xs text-[#171e19]">
+                        {new Date(share.expiresAt).toLocaleDateString()}
+                      </div>
+                      <div className="font-mono text-[10px] text-[#171e19]/50">
+                        {new Date(share.expiresAt).toLocaleTimeString()}
+                      </div>
+                    </td>
+
+                    {/* Actions: COPY LINK & REVOKE */}
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        {isActive ? (
                           <>
-                            <Check className="h-3.5 w-3.5 text-emerald-700" />
-                            <span>COPIED!</span>
+                            <button
+                              onClick={() => handleCopyLink(share._id)}
+                              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-anton text-xs uppercase tracking-wider transition-all shadow-sm cursor-pointer ${copiedId === share._id
+                                  ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                                  : 'bg-[#ffe17c] hover:brightness-105 active:scale-95 text-[#171e19]'
+                                }`}
+                              title="Copy share link to send to recipient"
+                            >
+                              {copiedId === share._id ? (
+                                <>
+                                  <Check className="h-3.5 w-3.5 text-emerald-700" />
+                                  <span>COPIED!</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Copy className="h-3.5 w-3.5 text-[#171e19]" />
+                                  <span>COPY LINK</span>
+                                </>
+                              )}
+                            </button>
+
+                            <button
+                              onClick={() => handleRevoke(share._id, share.recipientEmail)}
+                              className="px-3 py-1.5 rounded-lg font-anton text-xs uppercase tracking-wider bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-700 border border-rose-200 transition-all shadow-sm cursor-pointer"
+                              title="Revoke recipient access immediately"
+                            >
+                              Revoke
+                            </button>
                           </>
                         ) : (
-                          <>
-                            <Copy className="h-3.5 w-3.5 text-[#171e19]" />
-                            <span>COPY LINK</span>
-                          </>
+                          <button
+                            onClick={() => handleCopyLink(share._id)}
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg font-anton text-[11px] uppercase tracking-wider bg-[#171e19]/5 hover:bg-[#171e19]/10 text-[#171e19]/60 cursor-pointer"
+                            title="Copy inactive link reference"
+                          >
+                            <Copy className="h-3 w-3" />
+                            <span>{copiedId === share._id ? 'COPIED' : 'COPY'}</span>
+                          </button>
                         )}
-                      </button>
-
-                      {isActive && (
-                        <button
-                          onClick={() => handleRevoke(share._id, share.recipientEmail)}
-                          className="px-4 py-2.5 rounded-xl font-anton text-xs uppercase tracking-wider bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-700 border border-rose-200 transition-all shadow-sm cursor-pointer"
-                        >
-                          Revoke
-                        </button>
-                      )}
-                    </div>
-                  </div>
+                      </div>
+                    </td>
+                  </tr>
                 );
               })}
-            </div>
-          </div>
-        )
+            </tbody>
+          </table>
+        </div>
+
+        {/* Mobile Card List View */}
+        <div className="block md:hidden divide-y divide-[#171e19]/10">
+          {filteredOutboundShares.map((share) => {
+            const isRevoked = Boolean(share.revokedAt);
+            const isExpired = !isRevoked && new Date(share.expiresAt) < new Date();
+            const isActive = !isRevoked && !isExpired;
+
+            return (
+              <div key={share._id} className="p-4 space-y-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-10 h-10 rounded-xl bg-[#171e19] text-[#ffe17c] flex items-center justify-center shrink-0 font-bold shadow-sm">
+                      <FileText className="h-5 w-5" />
+                    </div>
+                    <div className="min-w-0 truncate">
+                      <span className="font-bold text-[#171e19] text-sm block truncate" title={share.documentId?.originalFilename}>
+                        {share.documentId?.originalFilename || 'Deleted Document'}
+                      </span>
+                      <span className="font-mono text-[11px] text-[#171e19]/60">
+                        {share.viewSessionCount} {share.maxViewSessions ? `/ ${share.maxViewSessions}` : 'views'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {isRevoked ? (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-anton uppercase tracking-wider bg-rose-50 text-rose-700 border border-rose-200 shrink-0">
+                      <XCircle className="h-3 w-3" />
+                      REVOKED
+                    </span>
+                  ) : isExpired ? (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-anton uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200 shrink-0">
+                      <Clock className="h-3 w-3" />
+                      EXPIRED
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-anton uppercase tracking-wider bg-[#ffe17c]/30 text-[#171e19] border border-[#ffe17c] font-bold shrink-0">
+                      <CheckCircle2 className="h-3 w-3 text-emerald-600" />
+                      ACTIVE
+                    </span>
+                  )}
+                </div>
+
+                <div className="bg-[#fafafa] p-3 rounded-xl border border-[#171e19]/10 space-y-1.5 font-mono text-xs text-[#171e19]/70">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[#171e19]/50">Recipient:</span>
+                    <span className="font-bold text-[#171e19] truncate max-w-[200px]">{share.recipientEmail}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[#171e19]/50">Expires:</span>
+                    <span className="text-[#171e19]">{new Date(share.expiresAt).toLocaleDateString()} {new Date(share.expiresAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 pt-1">
+                  <button
+                    onClick={() => handleCopyLink(share._id)}
+                    className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl font-anton text-xs uppercase tracking-wider transition-all cursor-pointer ${copiedId === share._id
+                        ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                        : 'bg-[#ffe17c] hover:brightness-105 active:scale-95 text-[#171e19] shadow-sm'
+                      }`}
+                  >
+                    {copiedId === share._id ? (
+                      <>
+                        <Check className="h-3.5 w-3.5 text-emerald-700" />
+                        <span>COPIED!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-3.5 w-3.5 text-[#171e19]" />
+                        <span>COPY LINK</span>
+                      </>
+                    )}
+                  </button>
+
+                  {isActive && (
+                    <button
+                      onClick={() => handleRevoke(share._id, share.recipientEmail)}
+                      className="px-4 py-2.5 rounded-xl font-anton text-xs uppercase tracking-wider bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-700 border border-rose-200 transition-all shadow-sm cursor-pointer"
+                    >
+                      Revoke
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      )
       )}
     </div>
   );
