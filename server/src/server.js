@@ -8,11 +8,6 @@ async function startServer() {
   // Connect to MongoDB
   await connectDB();
 
-  // Seed initial demo data for immediate testing if in development
-  if (config.env === 'development') {
-    await seedDemoData();
-  }
-
   const server = app.listen(config.port, () => {
     logger.info(`[SERVER] SecureShare API running on port ${config.port} in ${config.env} mode`);
     logger.info(`[SERVER] Storage Engine: ${config.storageMode.toUpperCase()}`);
