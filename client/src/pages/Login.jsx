@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Lock, Mail, ArrowRight, AlertCircle, Shield, Check } from 'lucide-react';
+import { Lock, Mail, ArrowRight, AlertCircle, ShieldCheck } from 'lucide-react';
 
 export default function Login() {
   const location = useLocation();
@@ -29,12 +29,6 @@ export default function Login() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const fillQuickAccount = (quickEmail, quickPassword) => {
-    setEmail(quickEmail);
-    setPassword(quickPassword);
-    setError('');
   };
 
   return (
@@ -111,33 +105,14 @@ export default function Login() {
           </button>
         </form>
 
-        {/* Demo Fast Fill Helpers */}
-        <div className="mt-8 pt-6 border-t border-[#171e19]/10">
-          <p className="font-anton text-xs uppercase tracking-wider text-[#171e19]/50 mb-2.5">
-            Quick Demo Credentials:
-          </p>
-          <div className="grid grid-cols-2 gap-2 font-satoshi">
-            <button
-              type="button"
-              onClick={() => fillQuickAccount('alice@secureshare.corp', 'Password123!')}
-              className="px-3 py-2 rounded-lg bg-[#fafafa] hover:bg-[#171e19]/5 border border-[#171e19]/10 text-left text-xs transition-colors cursor-pointer"
-            >
-              <span className="font-bold text-[#171e19] block">Sender (Alice)</span>
-              <span className="text-[10px] text-[#171e19]/60 block truncate font-mono">alice@secureshare.corp</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => fillQuickAccount('bob@secureshare.corp', 'Password123!')}
-              className="px-3 py-2 rounded-lg bg-[#fafafa] hover:bg-[#171e19]/5 border border-[#171e19]/10 text-left text-xs transition-colors cursor-pointer"
-            >
-              <span className="font-bold text-[#171e19] block">Receiver (Bob)</span>
-              <span className="text-[10px] text-[#171e19]/60 block truncate font-mono">bob@secureshare.corp</span>
-            </button>
-          </div>
+        {/* Security Note */}
+        <div className="mt-8 pt-6 border-t border-[#171e19]/10 flex items-center gap-2 text-[11px] font-satoshi text-[#171e19]/60 justify-center">
+          <ShieldCheck className="h-4 w-4 text-emerald-600" />
+          <span>Zero-Trust Cognito & AES-256 Envelope Secured</span>
         </div>
 
         {/* Register link */}
-        <div className="mt-6 text-center text-xs font-satoshi text-[#171e19]/60">
+        <div className="mt-4 text-center text-xs font-satoshi text-[#171e19]/60">
           Don't have an account yet?{' '}
           <Link to="/register" className="text-[#171e19] font-bold underline underline-offset-2 decoration-[#ffe17c] decoration-2 hover:opacity-80">
             Create an account
