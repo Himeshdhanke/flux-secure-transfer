@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { documentService, shareService, auditService } from '../services/api';
 import UploadModal from '../components/UploadModal';
 import ShareModal from '../components/ShareModal';
@@ -22,8 +22,10 @@ import {
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [documents, setDocuments] = useState([]);
   const [shares, setShares] = useState([]);
+  const [receivedShares, setReceivedShares] = useState([]);
   const [recentLogs, setRecentLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
@@ -31,13 +33,15 @@ export default function Dashboard() {
 
   const loadData = async () => {
     try {
-      const [docsRes, sharesRes, auditRes] = await Promise.all([
+      const [docsRes, sharesRes, receivedRes, auditRes] = await Promise.all([
         documentService.list(),
         shareService.list(),
+        shareService.listReceived(),
         auditService.list(5),
       ]);
       setDocuments(docsRes.data.documents || []);
       setShares(sharesRes.data.shares || []);
+      setReceivedShares(receivedRes.data.shares || []);
       setRecentLogs(auditRes.data.logs || []);
     } catch (err) {
       console.error('Failed to load dashboard metrics:', err);
@@ -49,10 +53,22 @@ export default function Dashboard() {
   useEffect(() => {
     setDocuments([]);
     setShares([]);
+    setReceivedShares([]);
     setRecentLogs([]);
     setLoading(true);
     loadData();
   }, [user?.email, user?.cognitoSub]);
+
+  const handlePreviewDoc = async (id) => {
+    try {
+      const res = await documentService.preview(id);
+      if (res.data?.viewUrl) {
+        navigate(res.data.viewUrl);
+      }
+    } catch (err) {
+      alert(err.response?.data?.error?.message || 'Failed to open preview.');
+    }
+  };
 
   const handleDeleteDoc = async (id, name) => {
     if (!window.confirm(`Are you sure you want to delete "${name}"? This will permanently delete the encrypted ciphertext and all active shares.`)) {
@@ -127,9 +143,32 @@ export default function Dashboard() {
         <div className="bg-white p-6 rounded-2xl brutalist-card-light flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="font-anton text-xs uppercase tracking-wider text-[#171e19]/60">
-              ACTIVE SHARES
+              SHARED WITH YOU
             </span>
             <div className="w-8 h-8 rounded-lg bg-[#ffe17c] text-[#171e19] flex items-center justify-center font-bold">
+              <Eye className="h-4 w-4" />
+            </div>
+          </div>
+          <div className="mt-4 flex items-baseline gap-2">
+            <span className="font-anton text-4xl sm:text-5xl text-[#171e19] leading-none">
+              {receivedShares.length}
+            </span>
+            <span className="font-mono text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
+              INBOUND
+            </span>
+          </div>
+          <p className="font-satoshi text-xs text-[#171e19]/50 mt-2 font-medium">
+            Available for protected viewing
+          </p>
+        </div>
+
+        {/* Metric 3 */}
+        <div className="bg-white p-6 rounded-2xl brutalist-card-light flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="font-anton text-xs uppercase tracking-wider text-[#171e19]/60">
+              ACTIVE SHARES
+            </span>
+            <div className="w-8 h-8 rounded-lg bg-[#171e19] text-[#ffe17c] flex items-center justify-center font-bold">
               <Share2 className="h-4 w-4" />
             </div>
           </div>
@@ -138,7 +177,7 @@ export default function Dashboard() {
               {activeSharesCount}
             </span>
             <span className="font-mono text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
-              EXPIRING
+              OUTBOUND
             </span>
           </div>
           <p className="font-satoshi text-xs text-[#171e19]/50 mt-2 font-medium">
@@ -146,14 +185,14 @@ export default function Dashboard() {
           </p>
         </div>
 
-        {/* Metric 3 */}
+        {/* Metric 4 */}
         <div className="bg-white p-6 rounded-2xl brutalist-card-light flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="font-anton text-xs uppercase tracking-wider text-[#171e19]/60">
               VIEW SESSIONS
             </span>
             <div className="w-8 h-8 rounded-lg bg-[#171e19] text-[#ffe17c] flex items-center justify-center font-bold">
-              <Eye className="h-4 w-4" />
+              <Activity className="h-4 w-4" />
             </div>
           </div>
           <div className="mt-4 flex items-baseline gap-2">
@@ -168,117 +207,170 @@ export default function Dashboard() {
             Forensic watermarked renders
           </p>
         </div>
-
-        {/* Metric 4 */}
-        <div className="bg-white p-6 rounded-2xl brutalist-card-light flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="font-anton text-xs uppercase tracking-wider text-[#171e19]/60">
-              PROTECTED PAGES
-            </span>
-            <div className="w-8 h-8 rounded-lg bg-[#171e19] text-[#ffe17c] flex items-center justify-center font-bold">
-              <Layers className="h-4 w-4" />
-            </div>
-          </div>
-          <div className="mt-4 flex items-baseline gap-2">
-            <span className="font-anton text-4xl sm:text-5xl text-[#171e19] leading-none">
-              {totalPages}
-            </span>
-            <span className="font-mono text-[11px] font-bold text-[#171e19]/60 bg-[#171e19]/5 px-2 py-0.5 rounded">
-              CANVASES
-            </span>
-          </div>
-          <p className="font-satoshi text-xs text-[#171e19]/50 mt-2 font-medium">
-            Never served as raw binary
-          </p>
-        </div>
       </div>
 
-      {/* Main Grid: Recent Documents & Live Activity */}
+      {/* Main Grid: Received Documents, Vault Documents & Live Activity */}
       <div className="grid lg:grid-cols-3 gap-8">
         
-        {/* Left 2 Cols: Recent Documents */}
-        <div className="lg:col-span-2 space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-[#171e19]/10">
-            <h2 className="font-anton text-2xl uppercase tracking-normal text-[#171e19] flex items-center gap-2">
-              <FileText className="h-5 w-5 text-[#171e19]" />
-              <span>RECENT ENCRYPTED DOCUMENTS</span>
-            </h2>
-            <Link
-              to="/documents"
-              className="font-satoshi text-xs font-bold text-[#171e19] hover:underline flex items-center gap-1 uppercase tracking-wider"
-            >
-              <span>View all ({documents.length})</span>
-              <ArrowUpRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
+        {/* Left 2 Cols: Received Documents + Vault Documents */}
+        <div className="lg:col-span-2 space-y-8">
 
-          {loading ? (
-            <div className="bg-white p-12 rounded-2xl border border-[#171e19]/10 text-center font-satoshi text-sm text-[#171e19]/60">
-              Loading encrypted vault records...
+          {/* Section A: Documents Shared With You (Receiver View) */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-[#171e19]/10">
+              <h2 className="font-anton text-2xl uppercase tracking-normal text-[#171e19] flex items-center gap-2">
+                <Eye className="h-5 w-5 text-[#171e19]" />
+                <span>DOCUMENTS SHARED WITH YOU</span>
+              </h2>
+              <span className="font-mono text-xs font-bold text-[#171e19] bg-[#ffe17c] px-2.5 py-1 rounded tracking-normal">
+                {receivedShares.length} {receivedShares.length === 1 ? 'FILE' : 'FILES'}
+              </span>
             </div>
-          ) : documents.length === 0 ? (
-            <div className="bg-white p-12 rounded-2xl text-center border-2 border-dashed border-[#171e19]/15">
-              <div className="h-14 w-14 rounded-2xl bg-[#171e19]/5 flex items-center justify-center text-[#171e19] mx-auto mb-3">
-                <FileText className="h-7 w-7" />
+
+            {loading ? (
+              <div className="bg-white p-8 rounded-2xl border border-[#171e19]/10 text-center font-satoshi text-xs text-[#171e19]/60">
+                Checking for inbound shared documents...
               </div>
-              <h3 className="font-anton text-lg uppercase text-[#171e19]">No documents uploaded yet</h3>
-              <p className="font-satoshi text-xs text-[#171e19]/60 mt-1 mb-4">
-                Upload your first PDF to encrypt it with authenticated AES-256-GCM.
-              </p>
-              <button
-                onClick={() => setIsUploadOpen(true)}
-                className="px-5 py-2.5 rounded-xl font-anton text-sm uppercase tracking-wider bg-[#ffe17c] text-[#171e19] hover:brightness-105 shadow-sm transition-all cursor-pointer"
-              >
-                Upload Document Now
-              </button>
-            </div>
-          ) : (
-            <div className="bg-white rounded-2xl border border-[#171e19]/10 overflow-hidden shadow-sm divide-y divide-[#171e19]/10">
-              {documents.slice(0, 5).map((doc) => (
-                <div
-                  key={doc._id}
-                  className="p-4 sm:p-5 flex items-center justify-between hover:bg-[#fafafa] transition-colors gap-4"
-                >
-                  <div className="flex items-center gap-3.5 truncate">
-                    <div className="h-11 w-11 rounded-xl bg-[#171e19] text-[#ffe17c] flex items-center justify-center shrink-0 font-bold shadow-sm">
-                      <FileText className="h-5 w-5" />
-                    </div>
-                    <div className="truncate">
-                      <p className="font-satoshi text-sm font-bold text-[#171e19] truncate">
-                        {doc.originalFilename}
-                      </p>
-                      <div className="flex items-center gap-2 mt-0.5 font-mono text-[11px] text-[#171e19]/60">
-                        <span>{doc.pageCount} {doc.pageCount === 1 ? 'page' : 'pages'}</span>
-                        <span>•</span>
-                        <span>{(doc.sizeBytes / (1024 * 1024)).toFixed(2)} MB</span>
-                        <span>•</span>
-                        <span className="text-[#171e19] font-bold bg-[#ffe17c]/40 px-1.5 py-0.2 rounded">
-                          AES-GCM
-                        </span>
+            ) : receivedShares.length === 0 ? (
+              <div className="bg-white p-8 rounded-2xl text-center border-2 border-dashed border-[#171e19]/15">
+                <div className="h-10 w-10 rounded-xl bg-[#171e19]/5 flex items-center justify-center text-[#171e19] mx-auto mb-2">
+                  <Eye className="h-5 w-5" />
+                </div>
+                <h3 className="font-anton text-base uppercase text-[#171e19]">No received documents yet</h3>
+                <p className="font-satoshi text-xs text-[#171e19]/60 mt-1 max-w-sm mx-auto">
+                  When other senders share confidential documents with <span className="font-mono font-semibold text-[#171e19]">{user?.email}</span>, they will appear here with instant view access.
+                </p>
+              </div>
+            ) : (
+              <div className="bg-white rounded-2xl border border-[#171e19]/10 overflow-hidden shadow-sm divide-y divide-[#171e19]/10">
+                {receivedShares.map((share) => (
+                  <div
+                    key={share._id}
+                    className="p-4 sm:p-5 flex items-center justify-between hover:bg-[#fafafa] transition-colors gap-4"
+                  >
+                    <div className="flex items-center gap-3.5 truncate">
+                      <div className="h-11 w-11 rounded-xl bg-[#ffe17c] text-[#171e19] flex items-center justify-center shrink-0 font-bold shadow-sm">
+                        <Lock className="h-5 w-5" />
+                      </div>
+                      <div className="truncate">
+                        <p className="font-satoshi text-sm font-bold text-[#171e19] truncate">
+                          {share.documentId?.originalFilename || 'Protected Document'}
+                        </p>
+                        <div className="flex items-center gap-2 mt-0.5 font-mono text-[11px] text-[#171e19]/60">
+                          <span>From: <strong className="text-[#171e19]">{share.ownerEmail || 'Sender'}</strong></span>
+                          <span>•</span>
+                          <span>{share.documentId?.pageCount || 1} pages</span>
+                          <span>•</span>
+                          <span className="text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.2 rounded">Authorized</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="flex items-center gap-2 shrink-0">
-                    <button
-                      onClick={() => setShareDoc(doc)}
-                      className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#ffe17c] hover:brightness-105 text-[#171e19] font-anton text-xs uppercase tracking-wider transition-all shadow-sm cursor-pointer"
+                    <Link
+                      to={`/view/${share._id}`}
+                      className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#ffe17c] hover:brightness-105 active:scale-95 text-[#171e19] font-anton text-xs uppercase tracking-wider transition-all shadow-md cursor-pointer shrink-0"
                     >
-                      <Share2 className="h-3.5 w-3.5" />
-                      <span>Share</span>
-                    </button>
-                    <button
-                      onClick={() => handleDeleteDoc(doc._id, doc.originalFilename)}
-                      className="p-2 rounded-lg text-[#171e19]/40 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                      title="Delete document"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+                      <Eye className="h-4 w-4" />
+                      <span>View Document</span>
+                    </Link>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Section B: Vault Encrypted Documents (Uploaded) */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-[#171e19]/10">
+              <h2 className="font-anton text-2xl uppercase tracking-normal text-[#171e19] flex items-center gap-2">
+                <FileText className="h-5 w-5 text-[#171e19]" />
+                <span>MY ENCRYPTED VAULT ({documents.length})</span>
+              </h2>
+              <Link
+                to="/documents"
+                className="font-satoshi text-xs font-bold text-[#171e19] hover:underline flex items-center gap-1 uppercase tracking-wider"
+              >
+                <span>Manage Library</span>
+                <ArrowUpRight className="h-3.5 w-3.5" />
+              </Link>
             </div>
-          )}
+
+            {loading ? (
+              <div className="bg-white p-12 rounded-2xl border border-[#171e19]/10 text-center font-satoshi text-sm text-[#171e19]/60">
+                Loading encrypted vault records...
+              </div>
+            ) : documents.length === 0 ? (
+              <div className="bg-white p-12 rounded-2xl text-center border-2 border-dashed border-[#171e19]/15">
+                <div className="h-14 w-14 rounded-2xl bg-[#171e19]/5 flex items-center justify-center text-[#171e19] mx-auto mb-3">
+                  <FileText className="h-7 w-7" />
+                </div>
+                <h3 className="font-anton text-lg uppercase text-[#171e19]">No documents uploaded yet</h3>
+                <p className="font-satoshi text-xs text-[#171e19]/60 mt-1 mb-4">
+                  Upload your first PDF to encrypt it with authenticated AES-256-GCM.
+                </p>
+                <button
+                  onClick={() => setIsUploadOpen(true)}
+                  className="px-5 py-2.5 rounded-xl font-anton text-sm uppercase tracking-wider bg-[#ffe17c] text-[#171e19] hover:brightness-105 shadow-sm transition-all cursor-pointer"
+                >
+                  Upload Document Now
+                </button>
+              </div>
+            ) : (
+              <div className="bg-white rounded-2xl border border-[#171e19]/10 overflow-hidden shadow-sm divide-y divide-[#171e19]/10">
+                {documents.slice(0, 5).map((doc) => (
+                  <div
+                    key={doc._id}
+                    className="p-4 sm:p-5 flex items-center justify-between hover:bg-[#fafafa] transition-colors gap-4"
+                  >
+                    <div className="flex items-center gap-3.5 truncate">
+                      <div className="h-11 w-11 rounded-xl bg-[#171e19] text-[#ffe17c] flex items-center justify-center shrink-0 font-bold shadow-sm">
+                        <FileText className="h-5 w-5" />
+                      </div>
+                      <div className="truncate">
+                        <p className="font-satoshi text-sm font-bold text-[#171e19] truncate">
+                          {doc.originalFilename}
+                        </p>
+                        <div className="flex items-center gap-2 mt-0.5 font-mono text-[11px] text-[#171e19]/60">
+                          <span>{doc.pageCount} {doc.pageCount === 1 ? 'page' : 'pages'}</span>
+                          <span>•</span>
+                          <span>{(doc.sizeBytes / (1024 * 1024)).toFixed(2)} MB</span>
+                          <span>•</span>
+                          <span className="text-[#171e19] font-bold bg-[#ffe17c]/40 px-1.5 py-0.2 rounded">
+                            AES-GCM
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        onClick={() => handlePreviewDoc(doc._id)}
+                        className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#171e19] hover:bg-black text-[#ffe17c] font-anton text-xs uppercase tracking-wider transition-all shadow-sm cursor-pointer"
+                        title="View document"
+                      >
+                        <Eye className="h-3.5 w-3.5" />
+                        <span>View</span>
+                      </button>
+                      <button
+                        onClick={() => setShareDoc(doc)}
+                        className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#ffe17c] hover:brightness-105 text-[#171e19] font-anton text-xs uppercase tracking-wider transition-all shadow-sm cursor-pointer"
+                      >
+                        <Share2 className="h-3.5 w-3.5" />
+                        <span>Share</span>
+                      </button>
+                      <button
+                        onClick={() => handleDeleteDoc(doc._id, doc.originalFilename)}
+                        className="p-2 rounded-lg text-[#171e19]/40 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                        title="Delete document"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Right 1 Col: Recent Audit / Security Activity */}

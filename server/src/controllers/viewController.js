@@ -19,7 +19,11 @@ class ViewController {
       const rawToken = req.params.token;
       const tokenHash = hashToken(rawToken);
 
-      const share = await Share.findOne({ tokenHash }).populate('documentId');
+      let share = await Share.findOne({ tokenHash }).populate('documentId');
+      if (!share && /^[0-9a-fA-F]{24}$/.test(rawToken)) {
+        share = await Share.findById(rawToken).populate('documentId');
+      }
+
       if (!share) {
         throw new NotFoundError('Shared document link not found or invalid.', 'INVALID_TOKEN');
       }
@@ -100,7 +104,10 @@ class ViewController {
     } catch (err) {
       // Audit denial event
       const tokenHash = hashToken(req.params.token || '');
-      const share = await Share.findOne({ tokenHash }).catch(() => null);
+      let share = await Share.findOne({ tokenHash }).catch(() => null);
+      if (!share && /^[0-9a-fA-F]{24}$/.test(req.params.token || '')) {
+        share = await Share.findById(req.params.token).catch(() => null);
+      }
 
       let eventType = 'SHARE_VIEW_DENIED_UNAUTHORIZED';
       if (err.code === 'EXPIRED') eventType = 'SHARE_VIEW_DENIED_EXPIRED';
@@ -221,7 +228,10 @@ class ViewController {
       const rawToken = req.params.token;
       const { violationType, trigger, pageNumber } = req.body;
       const tokenHash = hashToken(rawToken || '');
-      const share = await Share.findOne({ tokenHash }).catch(() => null);
+      let share = await Share.findOne({ tokenHash }).catch(() => null);
+      if (!share && /^[0-9a-fA-F]{24}$/.test(rawToken || '')) {
+        share = await Share.findById(rawToken).catch(() => null);
+      }
 
       await auditService.recordEvent({
         eventType: 'SECURITY_VIOLATION',

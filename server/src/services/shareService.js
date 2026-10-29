@@ -154,6 +154,24 @@ class ShareService {
     logger.security('Share revoked by owner', { shareId: share._id, ownerSub, ownerEmail });
     return share;
   }
+
+  /**
+   * List active shares received by a verified recipient email.
+   * @param {string} recipientEmail
+   * @returns {Promise<Array>}
+   */
+  async listSharesForRecipient(recipientEmail) {
+    if (!recipientEmail) return [];
+    const normalizedEmail = recipientEmail.toLowerCase().trim();
+
+    return Share.find({
+      recipientEmail: normalizedEmail,
+      revokedAt: null,
+      expiresAt: { $gt: new Date() },
+    })
+      .populate('documentId', 'originalFilename sizeBytes pageCount createdAt storageKey')
+      .sort({ createdAt: -1 });
+  }
 }
 
 module.exports = new ShareService();

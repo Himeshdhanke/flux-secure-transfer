@@ -6,6 +6,7 @@ const encryptionService = require('../services/encryptionService');
 const s3StorageService = require('../services/s3StorageService');
 const pdfRenderingService = require('../services/pdfRenderingService');
 const auditService = require('../services/auditService');
+const shareService = require('../services/shareService');
 const config = require('../config/env');
 const { ValidationError, NotFoundError, ForbiddenError } = require('../utils/errors');
 const logger = require('../utils/logger');
@@ -203,6 +204,59 @@ class DocumentController {
       res.json({
         success: true,
         message: 'Document and associated shares deleted permanently.',
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  /**
+   * Get or generate a direct preview viewing link for the document owner.
+   */
+  async previewDocument(req, res, next) {
+    try {
+      const query = { _id: req.params.id };
+      const normalizedEmail = req.user.email ? req.user.email.toLowerCase().trim() : null;
+      if (req.user.cognitoSub && normalizedEmail) {
+        query.$or = [{ ownerSub: req.user.cognitoSub }, { ownerEmail: normalizedEmail }];
+      } else if (req.user.cognitoSub) {
+        query.ownerSub = req.user.cognitoSub;
+      } else if (normalizedEmail) {
+        query.ownerEmail = normalizedEmail;
+      }
+
+      const document = await Document.findOne(query);
+      if (!document) {
+        throw new NotFoundError('Document not found or you do not have permission to view it.');
+      }
+
+      // Check if active self-preview share exists
+      let share = await Share.findOne({
+        documentId: document._id,
+        recipientEmail: normalizedEmail,
+        revokedAt: null,
+        expiresAt: { $gt: new Date() },
+      });
+
+      let rawToken = null;
+      if (!share) {
+        const created = await shareService.createShare({
+          documentId: document._id,
+          ownerSub: req.user.cognitoSub,
+          ownerEmail: req.user.email,
+          recipientEmail: req.user.email,
+          expiryHours: 72,
+        });
+        share = created.share;
+        rawToken = created.rawToken;
+      }
+
+      res.json({
+        success: true,
+        data: {
+          shareId: share._id,
+          viewUrl: `/view/${rawToken || share._id}`,
+        },
       });
     } catch (err) {
       next(err);

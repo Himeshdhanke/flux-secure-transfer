@@ -76,6 +76,10 @@ export const documentService = {
     const res = await api.get(`/documents/${id}`);
     return res.data;
   },
+  async preview(id) {
+    const res = await api.get(`/documents/${id}/preview`);
+    return res.data;
+  },
   async delete(id) {
     const res = await api.delete(`/documents/${id}`);
     return res.data;
@@ -89,6 +93,10 @@ export const shareService = {
   },
   async list() {
     const res = await api.get('/shares');
+    return res.data;
+  },
+  async listReceived() {
+    const res = await api.get('/shares/received');
     return res.data;
   },
   async get(id) {

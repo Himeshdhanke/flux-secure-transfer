@@ -78,6 +78,21 @@ class ShareController {
   }
 
   /**
+   * List all shares received by the authenticated recipient.
+   */
+  async listReceivedShares(req, res, next) {
+    try {
+      const shares = await shareService.listSharesForRecipient(req.user.email);
+      res.json({
+        success: true,
+        data: { shares },
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  /**
    * Get single share status by ID.
    */
   async getShare(req, res, next) {

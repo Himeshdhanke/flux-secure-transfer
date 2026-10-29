@@ -26,7 +26,11 @@ class AccessControlService {
     }
 
     const tokenHash = hashToken(rawToken);
-    const share = await Share.findOne({ tokenHash }).populate('documentId');
+    let share = await Share.findOne({ tokenHash }).populate('documentId');
+
+    if (!share && /^[0-9a-fA-F]{24}$/.test(rawToken)) {
+      share = await Share.findById(rawToken).populate('documentId');
+    }
 
     if (!share) {
       throw new NotFoundError('Document share not found or invalid token.', 'SHARE_NOT_FOUND');

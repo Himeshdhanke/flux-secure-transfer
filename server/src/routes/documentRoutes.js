@@ -11,6 +11,7 @@ router.use(authenticate);
 
 router.post('/', upload.single('document'), documentController.uploadDocument);
 router.get('/', documentController.listDocuments);
+router.get('/:id/preview', documentController.previewDocument);
 router.get('/:id', documentController.getDocument);
 router.delete('/:id', documentController.deleteDocument);
 

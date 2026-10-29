@@ -6,6 +6,7 @@ const { authenticate } = require('../middleware/authMiddleware');
 router.use(authenticate);
 
 router.get('/', shareController.listShares);
+router.get('/received', shareController.listReceivedShares);
 router.get('/:id', shareController.getShare);
 router.post('/:id/revoke', shareController.revokeShare);
 
