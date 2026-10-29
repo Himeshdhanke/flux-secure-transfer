@@ -261,11 +261,11 @@ export default function Dashboard() {
                     key={share._id}
                     className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between hover:bg-[#fafafa] transition-colors gap-3 sm:gap-4"
                   >
-                    <div className="flex items-center gap-3.5 min-w-0">
+                    <div className="flex items-start sm:items-center gap-3 min-w-0 w-full sm:w-auto flex-1">
                       <div className="h-11 w-11 rounded-xl bg-[#ffe17c] text-[#171e19] flex items-center justify-center shrink-0 font-bold shadow-sm">
                         <Lock className="h-5 w-5" />
                       </div>
-                      <div className="min-w-0 truncate">
+                      <div className="min-w-0 flex-1 truncate">
                         <p className="font-satoshi text-sm font-bold text-[#171e19] truncate" title={share.documentId?.originalFilename}>
                           {share.documentId?.originalFilename || 'Protected Document'}
                         </p>
@@ -354,11 +354,11 @@ export default function Dashboard() {
                     key={doc._id}
                     className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between hover:bg-[#fafafa] transition-colors gap-3 sm:gap-4"
                   >
-                    <div className="flex items-center gap-3.5 min-w-0">
+                    <div className="flex items-start sm:items-center gap-3 min-w-0 w-full sm:w-auto flex-1">
                       <div className="h-11 w-11 rounded-xl bg-[#171e19] text-[#ffe17c] flex items-center justify-center shrink-0 font-bold shadow-sm">
                         <FileText className="h-5 w-5" />
                       </div>
-                      <div className="min-w-0 truncate">
+                      <div className="min-w-0 flex-1 truncate">
                         <p className="font-satoshi text-sm font-bold text-[#171e19] truncate" title={doc.originalFilename}>
                           {doc.originalFilename}
                         </p>

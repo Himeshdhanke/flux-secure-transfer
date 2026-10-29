@@ -112,27 +112,27 @@ export default function Documents() {
     <div className="space-y-8 font-sans">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#171e19]/10">
-        <div>
+        <div className="min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#ffe17c]"></span>
-            <span className="font-mono text-[10px] uppercase font-bold tracking-widest text-[#171e19]/60">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#ffe17c] animate-pulse shrink-0"></span>
+            <span className="font-mono text-[10px] uppercase font-bold tracking-widest text-[#171e19]/60 truncate">
               ZERO-TRUST ENCRYPTED DOCUMENTS
             </span>
           </div>
-          <h1 className="font-anton text-4xl sm:text-5xl uppercase tracking-normal text-[#171e19] flex items-center gap-3">
-            DOCUMENT LIBRARY
-            <span className="font-mono text-xs font-bold px-2.5 py-1 rounded bg-[#171e19] text-[#ffe17c] tracking-normal">
+          <h1 className="font-anton text-3xl sm:text-5xl uppercase tracking-normal text-[#171e19] flex flex-wrap items-center gap-2 sm:gap-3 leading-none">
+            <span>DOCUMENT LIBRARY</span>
+            <span className="font-mono text-xs font-bold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded bg-[#171e19] text-[#ffe17c] tracking-normal shrink-0">
               {activeTab === 'received' ? `${receivedShares.length} RECEIVED` : `${documents.length} VAULT`}
             </span>
           </h1>
-          <p className="font-satoshi text-xs sm:text-sm text-[#171e19]/70 mt-1 font-medium">
+          <p className="font-satoshi text-xs sm:text-sm text-[#171e19]/70 mt-1.5 font-medium">
             View confidential documents shared with your account or manage your sealed AES-256 vault.
           </p>
         </div>
 
         <button
           onClick={() => setIsUploadOpen(true)}
-          className="flex items-center gap-2 px-6 py-3 rounded-xl font-anton text-base uppercase tracking-wider bg-[#ffe17c] text-[#171e19] shadow-md hover:brightness-105 active:scale-95 transition-all self-start sm:self-auto cursor-pointer"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-anton text-sm sm:text-base uppercase tracking-wider bg-[#ffe17c] text-[#171e19] shadow-md hover:brightness-105 active:scale-95 transition-all cursor-pointer shrink-0"
         >
           <Plus className="h-5 w-5 text-[#171e19]" />
           <span>Upload PDF</span>
@@ -211,62 +211,63 @@ export default function Documents() {
             </p>
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {filteredReceivedShares.map((share) => (
               <div
                 key={share._id}
-                className="bg-white rounded-2xl p-6 flex flex-col justify-between border border-[#171e19]/10 brutalist-card-light shadow-sm group hover:border-[#171e19]/30 transition-all"
+                className="bg-white rounded-2xl p-4 sm:p-6 flex flex-col justify-between border border-[#171e19]/10 brutalist-card-light shadow-sm group hover:border-[#171e19]/30 transition-all"
               >
                 <div>
-                  {/* Badge */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-emerald-50 text-emerald-800 text-[10px] font-mono font-bold uppercase tracking-wider border border-emerald-200">
-                      <ShieldCheck className="h-3 w-3 text-emerald-600" />
-                      <span>AUTHORIZED RECIPIENT</span>
+                  {/* Badge & Page count */}
+                  <div className="flex items-center justify-between mb-3 sm:mb-4 gap-2">
+                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 text-[10px] font-mono font-bold uppercase tracking-wider border border-emerald-200 shrink-0">
+                      <ShieldCheck className="h-3 w-3 text-emerald-600 shrink-0" />
+                      <span>AUTHORIZED</span>
                     </div>
-                    <span className="font-mono text-xs font-bold text-[#171e19]/60">
+                    <span className="font-mono text-[11px] sm:text-xs font-bold text-[#171e19]/60 shrink-0">
                       {share.documentId?.pageCount || 1} {share.documentId?.pageCount === 1 ? 'PAGE' : 'PAGES'}
                     </span>
                   </div>
 
                   {/* Title & Metadata */}
-                  <div className="flex items-start gap-3.5">
-                    <div className="h-12 w-12 rounded-xl bg-[#ffe17c] text-[#171e19] flex items-center justify-center font-bold shrink-0 shadow-sm">
-                      <Lock className="h-6 w-6" />
+                  <div className="flex items-start gap-3 min-w-0">
+                    <div className="h-11 w-11 rounded-xl bg-[#ffe17c] text-[#171e19] flex items-center justify-center font-bold shrink-0 shadow-sm">
+                      <Lock className="h-5 w-5" />
                     </div>
-                    <div className="truncate">
-                      <h3 className="font-satoshi text-base font-bold text-[#171e19] truncate group-hover:text-black transition-colors" title={share.documentId?.originalFilename}>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-satoshi text-sm sm:text-base font-bold text-[#171e19] truncate group-hover:text-black transition-colors" title={share.documentId?.originalFilename}>
                         {share.documentId?.originalFilename || 'Protected Document'}
                       </h3>
-                      <div className="flex items-center gap-2 mt-1 font-mono text-[11px] text-[#171e19]/60 truncate">
-                        <span>From: <strong className="text-[#171e19]">{share.ownerEmail || 'Sender'}</strong></span>
+                      <div className="flex items-center gap-1.5 mt-1 font-mono text-[11px] text-[#171e19]/60 truncate">
+                        <span>From:</span>
+                        <strong className="text-[#171e19] truncate">{share.ownerEmail || 'Sender'}</strong>
                       </div>
                     </div>
                   </div>
 
-                  {/* Expiration & Policy Details */}
+                  {/* Expiration Details */}
                   <div className="mt-4 pt-3 border-t border-[#171e19]/10 space-y-2">
                     <div className="flex items-center justify-between font-mono text-[11px] text-[#171e19]/70">
-                      <span className="flex items-center gap-1 text-[#171e19]/50">
+                      <span className="flex items-center gap-1 text-[#171e19]/50 shrink-0">
                         <Clock className="h-3 w-3" />
                         Valid Until:
                       </span>
-                      <span className="font-semibold text-[#171e19]">
+                      <span className="font-semibold text-[#171e19] truncate text-right">
                         {new Date(share.expiresAt).toLocaleDateString()} {new Date(share.expiresAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
                     <div className="font-mono text-[10px] text-emerald-700 bg-emerald-50/60 px-2 py-1 rounded border border-emerald-100 flex items-center gap-1.5">
                       <ShieldCheck className="h-3 w-3 shrink-0" />
-                      <span>Protected viewing with dynamic forensic watermark</span>
+                      <span className="truncate">Forensic watermark burned to canvas</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Primary Actions: COPY LINK & VIEW DOCUMENT */}
-                <div className="mt-6 pt-4 border-t border-[#171e19]/10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
+                <div className="mt-4 pt-3 border-t border-[#171e19]/10 flex items-center gap-2">
                   <button
                     onClick={() => handleCopyLink(share._id)}
-                    className={`h-10 w-full sm:w-auto flex items-center justify-center gap-1.5 px-3.5 rounded-xl font-anton text-xs uppercase tracking-wider transition-all cursor-pointer ${
+                    className={`h-10 flex-1 flex items-center justify-center gap-1.5 px-3 rounded-xl font-anton text-xs uppercase tracking-wider transition-all cursor-pointer ${
                       copiedId === share._id
                         ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
                         : 'bg-[#171e19]/5 hover:bg-[#171e19]/10 text-[#171e19]'
@@ -283,7 +284,7 @@ export default function Documents() {
 
                   <Link
                     to={`/view/${share._id}`}
-                    className="h-10 flex-1 flex items-center justify-center gap-2 px-4 rounded-xl bg-[#ffe17c] hover:brightness-105 active:scale-95 text-[#171e19] font-anton text-xs uppercase tracking-wider transition-all shadow-md cursor-pointer"
+                    className="h-10 flex-1 flex items-center justify-center gap-2 px-3 rounded-xl bg-[#ffe17c] hover:brightness-105 active:scale-95 text-[#171e19] font-anton text-xs uppercase tracking-wider transition-all shadow-md cursor-pointer"
                   >
                     <Eye className="h-4 w-4" />
                     <span>View Document</span>
@@ -316,31 +317,31 @@ export default function Documents() {
             )}
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {filteredVaultDocs.map((doc) => (
               <div
                 key={doc._id}
-                className="bg-white rounded-2xl p-6 flex flex-col justify-between border border-[#171e19]/10 brutalist-card-light shadow-sm group hover:border-[#171e19]/30 transition-all"
+                className="bg-white rounded-2xl p-4 sm:p-6 flex flex-col justify-between border border-[#171e19]/10 brutalist-card-light shadow-sm group hover:border-[#171e19]/30 transition-all"
               >
                 <div>
                   {/* Header Badge */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-[#171e19] text-[#ffe17c] text-[10px] font-mono font-bold uppercase tracking-wider">
+                  <div className="flex items-center justify-between mb-3 sm:mb-4 gap-2">
+                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#171e19] text-[#ffe17c] text-[10px] font-mono font-bold uppercase tracking-wider shrink-0">
                       <Lock className="h-3 w-3" />
                       <span>AES-256-GCM</span>
                     </div>
-                    <span className="font-mono text-xs font-bold text-[#171e19]/60">
+                    <span className="font-mono text-[11px] sm:text-xs font-bold text-[#171e19]/60 shrink-0">
                       {(doc.sizeBytes / (1024 * 1024)).toFixed(2)} MB
                     </span>
                   </div>
 
                   {/* Title & Metadata */}
-                  <div className="flex items-start gap-3.5">
-                    <div className="h-12 w-12 rounded-xl bg-[#171e19] text-[#ffe17c] flex items-center justify-center font-bold shrink-0 shadow-sm">
-                      <FileText className="h-6 w-6" />
+                  <div className="flex items-start gap-3 min-w-0">
+                    <div className="h-11 w-11 rounded-xl bg-[#171e19] text-[#ffe17c] flex items-center justify-center font-bold shrink-0 shadow-sm">
+                      <FileText className="h-5 w-5" />
                     </div>
-                    <div className="truncate">
-                      <h3 className="font-satoshi text-base font-bold text-[#171e19] truncate group-hover:text-black transition-colors" title={doc.originalFilename}>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-satoshi text-sm sm:text-base font-bold text-[#171e19] truncate group-hover:text-black transition-colors" title={doc.originalFilename}>
                         {doc.originalFilename}
                       </h3>
                       <div className="flex items-center gap-2 mt-1 font-mono text-[11px] text-[#171e19]/60">
@@ -357,34 +358,32 @@ export default function Documents() {
                     </div>
                   </div>
 
-                  {/* Storage Key Reference */}
+                  {/* Storage Reference */}
                   <div className="mt-4 pt-3 border-t border-[#171e19]/10">
                     <div className="font-mono text-[10px] text-[#171e19]/50 truncate">
-                      Storage Object: <span className="text-[#171e19] font-semibold">{doc.storageKey}</span>
+                      Storage: <span className="text-[#171e19] font-semibold">{doc.storageKey}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Action Buttons: View, Create Share, Delete */}
-                <div className="mt-6 pt-4 border-t border-[#171e19]/10 flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2 flex-1">
-                    <button
-                      onClick={() => handlePreviewDoc(doc._id)}
-                      className="h-10 flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 rounded-xl bg-[#171e19] hover:bg-black text-[#ffe17c] font-anton text-xs uppercase tracking-wider transition-all shadow-sm cursor-pointer"
-                      title="View document"
-                    >
-                      <Eye className="h-3.5 w-3.5" />
-                      <span>View</span>
-                    </button>
+                <div className="mt-4 pt-3 border-t border-[#171e19]/10 flex items-center gap-2">
+                  <button
+                    onClick={() => handlePreviewDoc(doc._id)}
+                    className="h-10 flex-1 flex items-center justify-center gap-1.5 px-3 rounded-xl bg-[#171e19] hover:bg-black text-[#ffe17c] font-anton text-xs uppercase tracking-wider transition-all shadow-sm cursor-pointer"
+                    title="View document"
+                  >
+                    <Eye className="h-3.5 w-3.5" />
+                    <span>View</span>
+                  </button>
 
-                    <button
-                      onClick={() => setShareDoc(doc)}
-                      className="h-10 flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 rounded-xl bg-[#ffe17c] hover:brightness-105 active:scale-95 text-[#171e19] font-anton text-xs uppercase tracking-wider transition-all shadow-sm cursor-pointer"
-                    >
-                      <Share2 className="h-3.5 w-3.5" />
-                      <span>Share</span>
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => setShareDoc(doc)}
+                    className="h-10 flex-1 flex items-center justify-center gap-1.5 px-3 rounded-xl bg-[#ffe17c] hover:brightness-105 active:scale-95 text-[#171e19] font-anton text-xs uppercase tracking-wider transition-all shadow-sm cursor-pointer"
+                  >
+                    <Share2 className="h-3.5 w-3.5" />
+                    <span>Share</span>
+                  </button>
 
                   <button
                     onClick={() => handleDelete(doc._id, doc.originalFilename)}
